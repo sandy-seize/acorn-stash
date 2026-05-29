@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#EC4899" />
+<title>FCX · 구리 산업 동향 리포트 | 2026-05-02</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root{
+    /* === 베이비 핑크 팔레트 (메인 600 = #EC4899) === */
+    --pink-900:#9D174D;
+    --pink-700:#BE185D;
+    --pink-600:#EC4899;   /* main vibrant pink */
+    --pink-500:#F472B6;   /* baby pink — gradient/deco */
+    --pink-400:#F9A8D4;
+    --pink-300:#FBCFE8;
+    --pink-200:#FCE7F3;
+    --pink-100:#FDF2F8;
+    --pink-50:#FFF5F8;
+    /* === legacy alias: 기존 var(--purple-XXX) 호출이 핑크를 가리키게 === */
+    --purple-900:var(--pink-900);
+    --purple-700:var(--pink-700);
+    --purple-600:var(--pink-600);
+    --purple-500:var(--pink-500);
+    --purple-400:var(--pink-400);
+    --purple-300:var(--pink-300);
+    --purple-200:var(--pink-200);
+    --purple-100:var(--pink-100);
+    --purple-50:var(--pink-50);
+
+    --bg:#FBF7FA;        /* 살짝 핑크 톤 배경 */
+    --surface:#FFFFFF;
+    --text:#1A1A1A;
+    --text-2:#4A4A55;
+    --text-3:#8A8A95;
+    --border:#F2E8EE;    /* 핑크 톤 보더 */
+    --green:#2BA15B;
+    --green-bg:#E6F5EC;
+    --red:#E85C5C;
+    --red-bg:#FCE9E9;
+    --gold:#E2B43C;
+    --shadow:0 1px 2px rgba(20,16,40,.04), 0 4px 14px rgba(190,24,93,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html,body{background:var(--bg);color:var(--text);font-family:'Pretendard',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;}
+  /* 모바일 좌우 스크롤 가드.
+     주의: overflow-x:hidden 은 position:sticky 를 깨뜨림 → overflow-x:clip 사용.
+     clip 은 새 스크롤 컨테이너를 만들지 않아 sticky LNB 가 viewport 기준으로 정상 동작 */
+  html,body{overflow-x:clip;width:100%;}
+  body{padding:0 0 80px;}
+  img,svg,video{max-width:100%;height:auto;}
+  a{color:inherit;text-decoration:none;}
+
+  /* ===== HEADER ===== */
+  .hero{
+    background:linear-gradient(135deg,var(--purple-600) 0%,var(--purple-700) 100%);
+    color:#fff;padding:28px 20px 36px;border-radius:0 0 28px 28px;
+    position:relative;overflow:hidden;
+  }
+  .hero::after{
+    content:'';position:absolute;right:-40px;top:-40px;width:180px;height:180px;
+    background:radial-gradient(circle,var(--purple-400) 0%,transparent 70%);opacity:.5;
+  }
+  .hero .tag{display:inline-block;background:rgba(255,255,255,.18);backdrop-filter:blur(8px);
+    padding:5px 12px;border-radius:99px;font-size:11px;font-weight:600;letter-spacing:.4px;margin-bottom:14px;}
+  .hero h1{font-size:24px;font-weight:800;letter-spacing:-.5px;line-height:1.25;}
+  .hero h1 small{display:block;font-size:13px;font-weight:500;opacity:.8;margin-top:6px;letter-spacing:0;}
+  .hero .meta{margin-top:14px;display:flex;gap:14px;font-size:11px;opacity:.85;}
+  .hero .meta b{font-weight:700;}
+
+  .price-row{display:flex;gap:8px;margin-top:18px;}
+  .price-card{flex:1;min-width:0;background:rgba(255,255,255,.13);backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:10px 10px;overflow:hidden;}
+  .price-card .lbl{font-size:10px;opacity:.75;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .price-card .val{font-size:16px;font-weight:800;margin-top:4px;letter-spacing:-.4px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums;}
+  .price-card .delta{font-size:10.5px;margin-top:2px;font-weight:600;color:#9DFFB8;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .price-card .delta.neg{color:#FFB0B0;}
+  @media(min-width:480px){
+    .price-row{gap:10px;}
+    .price-card{padding:11px 12px;}
+    .price-card .val{font-size:18px;}
+    .price-card .delta{font-size:11px;}
+  }
+
+  /* ===== CONTAINER ===== */
+  .container{padding:20px 16px 0;max-width:780px;margin:0 auto;}
+  @media(min-width:600px){.container{padding:28px 28px 0;}}
+
+  /* ===== SECTION ===== */
+  section{margin-bottom:22px;}
+  .section-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px;padding:0 4px;}
+  .section-head h2{font-size:18px;font-weight:800;letter-spacing:-.4px;}
+  .section-head .sub{font-size:11px;color:var(--text-3);}
+
+  /* ===== CARD ===== */
+  .card{background:var(--surface);border-radius:18px;padding:18px;box-shadow:var(--shadow);}
+  .card + .card{margin-top:12px;}
+  .card-title{font-size:15px;font-weight:700;letter-spacing:-.3px;}
+  .card-sub{font-size:11px;color:var(--text-3);margin-top:3px;margin-bottom:14px;}
+  .card-source{font-size:10px;color:var(--text-3);text-align:right;margin-top:10px;}
+  .card-source a{color:var(--text-3);text-decoration:none;border-bottom:1px dashed var(--border);
+    padding:1px 2px;transition:color .15s, border-color .15s, background .15s;}
+  .card-source a:hover,.card-source a:active{color:var(--purple-700);border-bottom-color:var(--purple-400);background:var(--purple-50);}
+  .card-source a::after{content:' ↗';font-size:9px;opacity:.65;}
+
+  /* ===== Source embed grid ===== */
+  .src-grid{display:grid;grid-template-columns:1fr;gap:10px;}
+  @media(min-width:560px){.src-grid{grid-template-columns:1fr 1fr;}}
+  .src-card{
+    display:block;background:var(--surface);border:1px solid var(--border);
+    border-radius:14px;padding:14px;color:inherit;
+    position:relative;overflow:hidden;
+  }
+  .src-card .ttl a{color:inherit;text-decoration:none;border-bottom:1.5px solid var(--purple-300);
+    padding:1px 0;transition:color .15s, border-color .15s, background .15s;}
+  .src-card .ttl a:hover{color:var(--purple-700);border-bottom-color:var(--purple-700);background:var(--purple-50);}
+  .src-card .ttl a::after{content:' ↗';font-size:10px;color:var(--purple-600);}
+  .src-card .meta a{color:var(--purple-600);font-weight:700;text-decoration:none;border-bottom:1px dashed var(--purple-300);}
+  .src-card .meta a:hover{color:var(--purple-900);border-bottom-style:solid;}
+  .src-card .domain{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--text-3);font-weight:600;letter-spacing:.3px;text-transform:uppercase;margin-bottom:6px;}
+  .src-card .favi{width:16px;height:16px;border-radius:4px;
+    display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;}
+  .src-card .ttl{font-size:13px;font-weight:700;letter-spacing:-.2px;line-height:1.35;color:var(--text);}
+  .src-card .desc{font-size:11px;color:var(--text-2);margin-top:6px;line-height:1.45;}
+  .src-card .meta{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:8px;border-top:1px solid var(--border);font-size:10px;color:var(--text-3);}
+  .src-card .meta .arrow{color:var(--purple-600);font-weight:700;}
+  .src-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--purple-400);}
+  .src-card.kiwoom::before{background:#FFCC00;}
+  .src-card.hl::before{background:#5897D9;}
+  .src-card.invest::before{background:#E37614;}
+  .src-card.metal::before{background:#3CB371;}
+  .src-card.sec::before{background:#1A4480;}
+  .src-card.kiwoom .favi{background:#FFCC00;color:#1A1A1A;}
+  .src-card.hl .favi{background:#5897D9;}
+  .src-card.invest .favi{background:#E37614;}
+  .src-card.metal .favi{background:#3CB371;}
+  .src-card.sec .favi{background:#1A4480;}
+
+  /* ===== KPI GRID ===== */
+  .kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+  .kpi{background:var(--surface);border-radius:14px;padding:14px 12px;box-shadow:var(--shadow);min-width:0;overflow:hidden;}
+  .kpi .lbl{font-size:11px;color:var(--text-3);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .kpi .val{font-size:18px;font-weight:800;margin-top:5px;letter-spacing:-.4px;line-height:1.2;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums;}
+  .kpi .val.long{font-size:14px;letter-spacing:-.3px;}
+  .kpi .yoy{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;margin-top:6px;}
+  @media(min-width:480px){
+    .kpi .val{font-size:20px;}
+    .kpi .val.long{font-size:16px;}
+  }
+  .kpi .yoy.up{background:var(--green-bg);color:var(--green);}
+  .kpi .yoy.down{background:var(--red-bg);color:var(--red);}
+  .kpi .yoy.flat{background:var(--purple-100);color:var(--purple-700);}
+
+  /* ===== TABLE ===== */
+  .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:12px;border:1px solid var(--border);}
+  table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;min-width:340px;}
+  thead th{background:var(--purple-600);color:#fff;font-weight:700;padding:11px 8px;font-size:12px;text-align:center;letter-spacing:-.2px;white-space:nowrap;}
+  thead th:first-child{border-radius:10px 0 0 0;}
+  thead th:last-child{border-radius:0 10px 0 0;}
+  tbody td{padding:11px 8px;border-bottom:1px solid var(--border);text-align:center;vertical-align:middle;word-break:keep-all;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr.highlight{background:var(--purple-50);}
+  tbody tr.highlight td{font-weight:600;}
+  td.num{font-variant-numeric:tabular-nums;}
+  td.left{text-align:left;}
+  .pos{color:var(--green);font-weight:700;}
+  .neg{color:var(--red);font-weight:700;}
+  .accent{color:var(--purple-600);font-weight:700;}
+
+  /* ===== CHART ===== */
+  .chart-box{position:relative;height:240px;width:100%;min-width:0;}
+  .chart-box.tall{height:300px;}
+  .chart-box.short{height:180px;}
+  @media(min-width:480px){.chart-box.short{height:200px;}}
+
+  /* ===== CHIP ===== */
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 4px;}
+  .chip{font-size:11px;padding:5px 10px;border-radius:99px;background:var(--purple-100);color:var(--purple-700);font-weight:600;}
+  .chip.green{background:var(--green-bg);color:var(--green);}
+  .chip.red{background:var(--red-bg);color:var(--red);}
+
+  /* ===== EVENT TIMELINE ===== */
+  .timeline{position:relative;padding-left:22px;}
+  .timeline::before{content:'';position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:var(--purple-200);}
+  .ev{position:relative;padding-bottom:14px;}
+  .ev::before{content:'';position:absolute;left:-22px;top:4px;width:14px;height:14px;border-radius:50%;background:var(--purple-600);box-shadow:0 0 0 4px var(--purple-100);}
+  .ev .date{font-size:10px;color:var(--purple-700);font-weight:700;letter-spacing:.3px;}
+  .ev .title{font-size:13px;font-weight:700;margin-top:2px;}
+  .ev .desc{font-size:11px;color:var(--text-2);margin-top:2px;line-height:1.45;}
+
+  /* ===== BULL/BEAR ===== */
+  .bb-grid{display:grid;grid-template-columns:1fr;gap:12px;}
+  @media(min-width:520px){.bb-grid{grid-template-columns:1fr 1fr;}}
+  .bb{padding:14px;border-radius:14px;}
+  .bb.bull{background:var(--green-bg);}
+  .bb.bear{background:var(--red-bg);}
+  .bb h3{font-size:13px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+  .bb.bull h3{color:var(--green);}
+  .bb.bear h3{color:var(--red);}
+  .bb ul{list-style:none;}
+  .bb li{font-size:12px;color:var(--text-2);padding:5px 0 5px 20px;position:relative;line-height:1.45;}
+  .bb.bull li::before{content:'+';position:absolute;left:0;color:var(--green);font-weight:800;}
+  .bb.bear li::before{content:'!';position:absolute;left:0;color:var(--red);font-weight:800;font-family:monospace;}
+
+  /* ===== TOC pills (sticky LNB) ===== */
+  /* 모바일 스크롤 밀림 원인: backdrop-filter + sticky 조합이 iOS Safari에서 매 프레임 합성.
+     solid bg 로 변경. transform 은 sticky 와 간섭 가능 → 사용 X. will-change 만 명시 */
+  .nav{
+    display:flex;gap:6px;overflow-x:auto;padding:10px 16px;
+    scrollbar-width:none;-ms-overflow-style:none;
+    position:sticky;top:0;z-index:50;
+    background:var(--bg);
+    border-bottom:1px solid var(--border);
+    transition:box-shadow .2s;
+    will-change:box-shadow;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior-x:contain;
+  }
+  .nav.scrolled{box-shadow:0 4px 14px rgba(20,16,40,.06);}
+  .nav::-webkit-scrollbar{display:none;}
+  .nav a{flex:none;font-size:11.5px;font-weight:600;padding:7px 13px;background:var(--surface);
+    border:1px solid var(--border);border-radius:99px;color:var(--text-2);white-space:nowrap;
+    transition:background .15s, color .15s, border-color .15s, transform .15s;}
+  .nav a:hover{color:var(--purple-700);border-color:var(--purple-300);}
+  .nav a.active{background:var(--purple-600);color:#fff;border-color:var(--purple-600);}
+  /* anchor offset so sticky bar doesn't cover headings */
+  section[id]{scroll-margin-top:60px;}
+
+  /* ===== BIG QUOTE ===== */
+  .quote{background:linear-gradient(135deg,var(--purple-50) 0%,var(--purple-100) 100%);
+    border-left:4px solid var(--purple-600);padding:14px 16px;border-radius:0 14px 14px 0;
+    font-size:13px;font-weight:600;line-height:1.55;color:var(--text);}
+
+  /* ===== FOOTER ===== */
+  .footer{text-align:center;padding:28px 16px 0;color:var(--text-3);font-size:10.5px;line-height:1.75;}
+  .footer .tag-line{margin-bottom:6px;}
+  .footer .src{margin-top:6px;color:var(--text-3);}
+  .footer .src a{color:var(--text-3);text-decoration:none;border-bottom:1px dotted var(--border);
+    padding:1px 1px;transition:color .15s, border-color .15s;}
+  .footer .src a:hover{color:var(--text-2);border-bottom-color:var(--text-3);}
+  .footer .copy{margin-top:10px;color:var(--text-3);}
+
+  /* ===== Big donut center text ===== */
+  .donut-wrap{position:relative;}
+  .donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;}
+  .donut-center .l{font-size:10px;color:var(--text-3);}
+  .donut-center .v{font-size:22px;font-weight:800;letter-spacing:-.5px;}
+  .donut-center .s{font-size:10px;color:var(--text-3);margin-top:1px;}
+
+  /* ===== REVEAL ANIMATION ===== */
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .55s ease, transform .55s cubic-bezier(.2,.8,.2,1);will-change:opacity,transform;}
+  .reveal.visible{opacity:1;transform:translateY(0);}
+  .reveal-stagger > *{opacity:0;transform:translateY(14px);transition:opacity .5s ease, transform .5s cubic-bezier(.2,.8,.2,1);}
+  .reveal-stagger.visible > *{opacity:1;transform:translateY(0);}
+  .reveal-stagger.visible > *:nth-child(1){transition-delay:.04s;}
+  .reveal-stagger.visible > *:nth-child(2){transition-delay:.10s;}
+  .reveal-stagger.visible > *:nth-child(3){transition-delay:.16s;}
+  .reveal-stagger.visible > *:nth-child(4){transition-delay:.22s;}
+  .reveal-stagger.visible > *:nth-child(5){transition-delay:.28s;}
+  .reveal-stagger.visible > *:nth-child(6){transition-delay:.34s;}
+  .reveal-stagger.visible > *:nth-child(7){transition-delay:.40s;}
+  .reveal-stagger.visible > *:nth-child(8){transition-delay:.46s;}
+  @media (prefers-reduced-motion: reduce){
+    .reveal,.reveal-stagger > *{opacity:1!important;transform:none!important;transition:none!important;}
+  }
+
+  /* ===== FAB (scroll to top) ===== */
+  .fab{
+    position:fixed;right:16px;bottom:20px;z-index:999;
+    width:52px;height:52px;border-radius:50%;border:none;
+    background:linear-gradient(135deg,var(--purple-600) 0%,var(--purple-700) 100%);
+    color:#fff;cursor:pointer;
+    box-shadow:0 6px 18px rgba(60,40,160,.35), 0 2px 6px rgba(60,40,160,.2);
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;pointer-events:none;transform:translateY(12px) scale(.85);
+    transition:opacity .3s ease, transform .3s cubic-bezier(.2,.8,.2,1), background .2s;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .fab.show{opacity:1;pointer-events:auto;transform:translateY(0) scale(1);}
+  .fab:active{transform:scale(.92);}
+  .fab svg.arrow{width:20px;height:20px;display:block;position:relative;z-index:2;}
+  .fab .progress-ring{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+  .fab .progress-ring circle.track{
+    fill:none;stroke:rgba(255,255,255,.22);stroke-width:2.5;
+  }
+  .fab .progress-ring circle.bar{
+    fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round;
+    transform:rotate(-90deg);transform-origin:center;
+    transition:stroke-dashoffset .15s linear;
+  }
+  @media(min-width:900px){.fab{right:32px;bottom:32px;}}
+
+  /* ===== Live link cards (investing.com) ===== */
+  .live-grid{display:grid;grid-template-columns:1fr;gap:10px;}
+  @media(min-width:560px){.live-grid{grid-template-columns:1fr 1fr;}}
+  .live-card{
+    display:block;background:var(--surface);border-radius:16px;padding:14px 16px;
+    box-shadow:var(--shadow);color:inherit;
+    border:1px solid var(--border);position:relative;overflow:hidden;
+  }
+  .live-card::before{
+    content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+    background:linear-gradient(180deg,var(--purple-600),var(--purple-400));
+  }
+  .live-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .live-head .ticker{font-size:13px;font-weight:800;letter-spacing:-.2px;}
+  .live-head .badge{font-size:9px;font-weight:700;padding:3px 7px;border-radius:99px;
+    background:var(--purple-100);color:var(--purple-700);letter-spacing:.4px;}
+  .live-head .badge.dot::before{content:'●';margin-right:4px;color:var(--green);font-size:8px;animation:pulse 1.4s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .live-name{font-size:11px;color:var(--text-3);margin-bottom:10px;}
+  .live-price{display:flex;align-items:baseline;gap:8px;margin-bottom:10px;}
+  .live-price .px{font-size:22px;font-weight:800;letter-spacing:-.5px;font-variant-numeric:tabular-nums;}
+  .live-price .ch{font-size:12px;font-weight:700;}
+  .live-price .ch.up{color:var(--green);}
+  .live-price .ch.down{color:var(--red);}
+  .live-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;font-size:10.5px;}
+  .live-stats .l{color:var(--text-3);}
+  .live-stats .v{font-weight:700;text-align:right;font-variant-numeric:tabular-nums;}
+  .live-foot{display:flex;align-items:center;gap:4px;margin-top:10px;padding-top:10px;
+    border-top:1px solid var(--border);font-size:10px;color:var(--text-3);}
+  .live-foot a{color:var(--purple-700);text-decoration:none;border-bottom:1px solid var(--purple-300);font-weight:600;
+    padding:1px 1px;transition:color .15s, border-color .15s, background .15s;}
+  .live-foot a:hover{color:var(--purple-900);border-bottom-color:var(--purple-700);background:var(--purple-50);}
+  .live-foot a::after{content:' ↗';font-size:9px;}
+
+  /* ===== Compare cards ===== */
+  .compare{display:grid;grid-template-columns:1fr;gap:10px;}
+  @media(min-width:560px){.compare{grid-template-columns:1fr 1fr;}}
+  .compare .col{padding:12px;border-radius:12px;background:var(--purple-50);min-width:0;}
+  .compare .col h4{font-size:13px;font-weight:800;color:var(--purple-700);margin-bottom:8px;}
+  .compare .col .row{display:flex;justify-content:space-between;align-items:center;gap:8px;
+    font-size:11.5px;padding:5px 0;border-bottom:1px solid rgba(125,92,255,.08);}
+  .compare .col .row:last-child{border-bottom:none;}
+  .compare .col .row .l{color:var(--text-3);flex-shrink:0;}
+  .compare .col .row .v{font-weight:700;color:var(--text);text-align:right;
+    word-break:keep-all;overflow-wrap:anywhere;}
+</style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<header class="hero">
+  <span class="tag">SECTOR · METALS &amp; MINING</span>
+  <h1>프리포트 맥모란 (FCX.US)
+    <small>구리 슈퍼사이클의 최대 수혜주 · 산업 동향 리포트</small>
+  </h1>
+  <div class="meta">
+    <span>📅 <b>2026-05-02</b></span>
+    <span>📊 키움 + ICSG + S&amp;P + HL</span>
+  </div>
+  <div class="price-row">
+    <div class="price-card">
+      <div class="lbl">현재주가 (실시간)</div>
+      <div class="val">$56.55</div>
+      <div class="delta neg">−2.13% (−$1.23)</div>
+    </div>
+    <div class="price-card">
+      <div class="lbl">평균 목표주가</div>
+      <div class="val">$67.57</div>
+      <div class="delta">+19.5% upside · 22 분석가</div>
+    </div>
+    <div class="price-card">
+      <div class="lbl">시가총액</div>
+      <div class="val">$81.3B</div>
+      <div class="delta">12M +56.5%</div>
+    </div>
+  </div>
+  <div style="margin-top:8px;font-size:10px;opacity:.8;text-align:right;">
+    Live ·
+    <a href="https://www.investing.com/equities/freeport-mcm" target="_blank" rel="noopener" style="color:#fff;text-decoration:underline;text-decoration-style:dashed;text-underline-offset:3px;">investing.com</a>
+    · 2026-05-02 재크롤링
+  </div>
+</header>
+
+<nav class="nav" id="lnb">
+  <a href="#summary">요약</a>
+  <a href="#kpi">핵심지표</a>
+  <a href="#earn">실적</a>
+  <a href="#stock">종목동향</a>
+  <a href="#peer">Peer</a>
+  <a href="#comment">분석코멘트</a>
+  <a href="#sources">출처</a>
+</nav>
+
+<div class="container">
+
+  <!-- ===== 0. SUMMARY ===== -->
+  <section id="summary">
+    <div class="section-head"><h2>한 줄 요약</h2><span class="sub">2026-05-02 기준</span></div>
+    <div class="quote reveal">
+      세계 2위 구리 광산기업 <b>FCX</b>는 ① <b>Grasberg 사고로 인한 글로벌 공급 쇼크</b>,
+      ② <b>미국 구리 관세</b>, ③ <b>AI·전동화 구조적 수요</b> — 3박자가 겹친 구리 슈퍼사이클의 핵심 수혜주.
+      키움 컨센서스 기준 FY26E 매출 +9.6%, <b>영업이익 +45.7%</b>, EPS +37.3% 점프 예상.
+    </div>
+  </section>
+
+  <!-- ===== 2. KPI GROUP (실시간 + 핵심지표) ===== -->
+  <section id="kpi">
+    <div class="section-head"><h2>실시간 시세</h2><span class="sub"><a href="https://www.investing.com" target="_blank" rel="noopener" style="color:inherit;border-bottom:1px dashed var(--border);">investing.com</a> · 2026-05-02 재크롤링</span></div>
+    <div class="live-grid">
+      <div class="live-card reveal">
+        <div class="live-head">
+          <div class="ticker">FCX <span style="color:var(--text-3);font-weight:500;font-size:11px;">· NYSE</span></div>
+          <span class="badge dot">LIVE</span>
+        </div>
+        <div class="live-name">Freeport-McMoRan Inc · 본 리포트 종목</div>
+        <div class="live-price">
+          <span class="px">$56.55</span>
+          <span class="ch down">−$1.23 (−2.13%)</span>
+        </div>
+        <div class="live-stats">
+          <span class="l">시가총액</span><span class="v">$81.29B</span>
+          <span class="l">P/E</span><span class="v">30.13</span>
+          <span class="l">EPS (TTM)</span><span class="v">$1.89</span>
+          <span class="l">배당수익률</span><span class="v">1.05%</span>
+          <span class="l">52주 범위</span><span class="v">$35.15 ~ $70.97</span>
+          <span class="l">12M 수익률</span><span class="v" style="color:var(--green);">+56.47%</span>
+          <span class="l">평균 목표가</span><span class="v">$67.57 (+19.5%)</span>
+          <span class="l">애널 컨센서스</span><span class="v">Buy 18·Hold 3·Sell 1</span>
+          <span class="l">차기 실적</span><span class="v">2026-07-16</span>
+          <span class="l">평균거래량</span><span class="v">18.03M</span>
+        </div>
+        <div class="live-foot">
+          <a href="https://www.investing.com/equities/freeport-mcm" target="_blank" rel="noopener">investing.com/equities/freeport-mcm</a>
+        </div>
+      </div>
+
+      <div class="live-card reveal">
+        <div class="live-head">
+          <div class="ticker">SCCO <span style="color:var(--text-3);font-weight:500;font-size:11px;">· NYSE</span></div>
+          <span class="badge" style="background:var(--purple-100);color:var(--purple-700);">PEER · USD</span>
+        </div>
+        <div class="live-name">Southern Copper Corp · 멕시코·페루 거점 1위 매장량</div>
+        <div class="live-price">
+          <span class="px">$171.18</span>
+          <span class="ch down">−$0.51 (−0.30%)</span>
+        </div>
+        <div class="live-stats">
+          <span class="l">시가총액</span><span class="v">$141.46B</span>
+          <span class="l">P/E</span><span class="v">28.80</span>
+          <span class="l">EPS (TTM)</span><span class="v">$5.96</span>
+          <span class="l">배당수익률</span><span class="v">2.37%</span>
+          <span class="l">52주 범위</span><span class="v">$84.29 ~ $223.89</span>
+          <span class="l">12M 수익률</span><span class="v" style="color:var(--green);">+94.64%</span>
+          <span class="l">평균 목표가</span><span class="v" style="color:var(--red);">$163.54 (−4.5%)</span>
+          <span class="l">애널 컨센서스</span><span class="v" style="color:var(--red);">Sell 9·Hold 5·Buy 2</span>
+          <span class="l">상장</span><span class="v">NYSE (ADR 아님)</span>
+          <span class="l">시총 순위</span><span class="v" style="color:var(--purple-600);">미장 구리 1위</span>
+        </div>
+        <div class="live-foot">
+          <a href="https://www.investing.com/equities/southern-copper-corp." target="_blank" rel="noopener">investing.com/equities/southern-copper-corp.</a>
+        </div>
+      </div>
+    </div>
+    <div class="quote reveal" style="margin-top:12px;font-size:12px;">
+      <b>미장 1·2위 핵심:</b> 12M 수익률 SCCO <b style="color:var(--green);">+94.6%</b> vs FCX <b style="color:var(--green);">+56.5%</b>.
+      SCCO는 매장량·마진은 압도적이나 컨센서스가 <b style="color:var(--red);">Sell 우위</b> — 이미 충분히 올랐다는 뷰. FCX가 Grasberg 회복+미국 관세 수혜 시 갭 좁힘 여지가 더 크다는 게 분석가 다수 의견.
+    </div>
+
+    <div class="section-head" style="margin-top:24px;"><h2>핵심 지표</h2><span class="sub">키움 컨센서스</span></div>
+    <div class="kpi-grid reveal-stagger">
+      <div class="kpi">
+        <div class="lbl">FY26E 매출</div>
+        <div class="val">$28.4B</div>
+        <span class="yoy up">+9.6% YoY</span>
+      </div>
+      <div class="kpi">
+        <div class="lbl">FY26E 영업이익</div>
+        <div class="val">$9.56B</div>
+        <span class="yoy up">+45.7% YoY</span>
+      </div>
+      <div class="kpi">
+        <div class="lbl">FY26E EPS</div>
+        <div class="val">$2.6</div>
+        <span class="yoy up">+45.5% YoY</span>
+      </div>
+      <div class="kpi">
+        <div class="lbl">FY26E ROE</div>
+        <div class="val">17.5%</div>
+        <span class="yoy up">+3.5%p</span>
+      </div>
+      <div class="kpi">
+        <div class="lbl">FY27E OPM</div>
+        <div class="val">39.9%</div>
+        <span class="yoy up">+6.2%p</span>
+      </div>
+      <div class="kpi">
+        <div class="lbl">52주 변동폭</div>
+        <div class="val long">$35.15 → $70.97</div>
+        <span class="yoy flat">+102%</span>
+      </div>
+      <div class="kpi">
+        <div class="lbl">LME 구리 ('26.01.26)</div>
+        <div class="val long">$13,195 / t</div>
+        <span class="yoy up">'25 +44%</span>
+      </div>
+      <div class="kpi">
+        <div class="lbl">2026 정련구리 수급</div>
+        <div class="val">−150 kt</div>
+        <span class="yoy down">적자전환</span>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== 3. EARNINGS ===== -->
+  <section id="earn">
+    <div class="section-head"><h2>분기 실적 추이 및 전망</h2><span class="sub">FY4Q23 ~ FY4Q27E</span></div>
+    <div class="card reveal">
+      <div class="card-title">매출 (백만 $) · 영업이익률 (%)</div>
+      <div class="card-sub">FY26 Q2부터 Grasberg 단계 재가동, 영업이익률 30%대 진입</div>
+      <div class="chart-box tall"><canvas id="chart-earn"></canvas></div>
+      <div class="card-source">[출처: <a href="https://bbn.kiwoom.com/rfCC1327" target="_blank" rel="noopener">키움증권 리서치 (Bloomberg 컨센서스 인용)</a>]</div>
+    </div>
+    <div class="card reveal">
+      <div class="card-title">연간 EPS 추이</div>
+      <div class="card-sub">FY24 → FY27E 2배 이상 점프</div>
+      <div class="chart-box short"><canvas id="chart-eps"></canvas></div>
+      <div class="card-source">[출처: <a href="https://bbn.kiwoom.com/rfCC1327" target="_blank" rel="noopener">키움증권 리서치</a>]</div>
+    </div>
+
+    <div class="card reveal">
+      <div class="card-title">Earnings Table</div>
+      <div class="card-sub">단위: 백만 USD</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>항목</th><th>FY24</th><th>FY25</th><th>FY26E</th><th>FY27E</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="left">매출액</td><td class="num">25,455</td><td class="num">25,915</td><td class="num accent">28,405</td><td class="num accent">32,618</td></tr>
+            <tr><td class="left">영업이익</td><td class="num">6,907</td><td class="num">6,372</td><td class="num accent">9,561</td><td class="num accent">13,013</td></tr>
+            <tr><td class="left">OPM(%)</td><td class="num">27.1</td><td class="num">24.6</td><td class="num accent">33.7</td><td class="num accent">39.9</td></tr>
+            <tr><td class="left">순이익</td><td class="num">1,889</td><td class="num">2,204</td><td class="num accent">3,744</td><td class="num accent">4,808</td></tr>
+            <tr><td class="left">EPS($)</td><td class="num">1.5</td><td class="num">1.8</td><td class="num accent">2.6</td><td class="num accent">3.3</td></tr>
+            <tr class="highlight"><td class="left">EPS YoY</td><td class="neg">-3.9%</td><td class="pos">+19.6%</td><td class="pos">+45.5%</td><td class="pos">+29.6%</td></tr>
+            <tr><td class="left">PER(배)</td><td class="num">28.5</td><td class="num">33.2</td><td class="num">23.8</td><td class="num">18.3</td></tr>
+            <tr><td class="left">ROE(%)</td><td class="num">12.5</td><td class="num">14.0</td><td class="num accent">17.5</td><td class="num accent">19.3</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-source">[출처: <a href="https://bbn.kiwoom.com/rfCC1327" target="_blank" rel="noopener">키움증권 리서치 (데이터스트림 인용)</a>]</div>
+    </div>
+  </section>
+
+  <!-- ===== 4. STOCK TREND (구리값과 함께 가는 FCX + 글로벌 수급) ===== -->
+  <section id="stock">
+    <div class="section-head"><h2>종목 동향</h2><span class="sub">구리값 · 글로벌 수급</span></div>
+    <div class="card reveal">
+      <div class="card-title">구리가격 vs FCX 주가 추이</div>
+      <div class="card-sub">10년간 구리 ~3배 / FCX 주가 ~10배 (베타 ~3.3x)</div>
+      <div class="chart-box tall"><canvas id="chart-price"></canvas></div>
+      <div class="card-source">[출처: <a href="https://bbn.kiwoom.com/rfCC1327" target="_blank" rel="noopener">키움증권 리서치 (Bloomberg 인용)</a>]</div>
+    </div>
+
+    <div class="section-head" style="margin-top:18px;"><h2 style="font-size:15px;">글로벌 구리 수급</h2><span class="sub"><a href="https://bbn.kiwoom.com/rfCC1327" target="_blank" rel="noopener" style="color:inherit;border-bottom:1px dashed var(--border);">키움 (ICSG 인용)</a> · 2024–2026E</span></div>
+    <div class="card reveal">
+      <div class="card-title">정련구리 수급 밸런스 (천톤)</div>
+      <div class="card-sub">2026년 적자 전환 — Grasberg 사고로 정광 증가율 3.4% → 0.9% 하향</div>
+      <div class="chart-box"><canvas id="chart-balance"></canvas></div>
+      <div class="card-source">[출처: <a href="https://bbn.kiwoom.com/rfCC1327" target="_blank" rel="noopener">키움증권 리서치 (ICSG 인용)</a>]</div>
+    </div>
+
+    <div class="card reveal">
+      <div class="card-title">구리 소비 구조 변화</div>
+      <div class="card-sub">2024 27.6 Mt → 2040E 42.3 Mt (+53%)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:center;">
+        <div class="donut-wrap">
+          <div class="chart-box short"><canvas id="chart-2024"></canvas></div>
+          <div class="donut-center">
+            <div class="l">2024</div>
+            <div class="v">27.6</div>
+            <div class="s">Mt</div>
+          </div>
+        </div>
+        <div class="donut-wrap">
+          <div class="chart-box short"><canvas id="chart-2040"></canvas></div>
+          <div class="donut-center">
+            <div class="l">2040E</div>
+            <div class="v">42.3</div>
+            <div class="s">Mt</div>
+          </div>
+        </div>
+      </div>
+      <div class="chips" style="justify-content:center;margin-top:10px;">
+        <span class="chip">Core Economic</span>
+        <span class="chip" style="background:var(--purple-600);color:#fff;">Energy Transition · AI/DC · Defense</span>
+      </div>
+      <div class="card-source">[출처: <a href="https://bbn.kiwoom.com/rfCC1327" target="_blank" rel="noopener">키움증권 리서치 (FCX·S&amp;P Global 인용)</a>]</div>
+    </div>
+
+    <div class="card reveal">
+      <div class="card-title">2026 글로벌 정련 수급 — 지역별</div>
+      <div class="card-sub">단위: 천톤 (kt)</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th>지역</th><th>광산 생산</th><th>정련 생산</th><th>정련 수요</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="left">아프리카</td><td class="num">4,759</td><td class="num">3,262</td><td class="num">186</td></tr>
+            <tr><td class="left">북미</td><td class="num">2,458</td><td class="num">1,736</td><td class="num">2,341</td></tr>
+            <tr><td class="left">중남미</td><td class="num accent">9,232</td><td class="num">2,491</td><td class="num">407</td></tr>
+            <tr><td class="left">아세안-10</td><td class="num">839</td><td class="num">836</td><td class="num">1,318</td></tr>
+            <tr class="highlight"><td class="left">아시아 (CN 포함)</td><td class="num">3,039</td><td class="num">17,139</td><td class="num">20,417</td></tr>
+            <tr><td class="left">EU</td><td class="num">787</td><td class="num">2,559</td><td class="num">3,011</td></tr>
+            <tr><td class="left"><b>전 세계 합계</b></td><td class="num"><b>24,762</b></td><td class="num"><b>30,337</b></td><td class="num"><b>28,729</b></td></tr>
+            <tr style="background:var(--red-bg);"><td class="left"><b>수급 밸런스</b></td><td colspan="3" class="num"><b style="color:var(--red);font-size:14px;">−150 kt (초과수요)</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-source">[출처: <a href="https://bbn.kiwoom.com/rfCC1327" target="_blank" rel="noopener">키움증권 리서치 (ICSG 인용)</a>]</div>
+    </div>
+  </section>
+
+  <!-- ===== 5. PEER (Top 10 + 피어 + Antofagasta) ===== -->
+  <section id="peer">
+    <div class="section-head"><h2>Peer</h2><span class="sub">광산 · 주가 · Antofagasta</span></div>
+
+    <div class="card reveal">
+      <div class="card-title">Top 10 구리 광산 — FCX는 Top 6 안에 3개 보유</div>
+      <div class="card-sub">Grasberg, Morenci, Cerro Verde — 단일 기업 최강 포트폴리오</div>
+      <div class="chart-box tall"><canvas id="chart-mines"></canvas></div>
+      <div class="card-source">[출처: <a href="https://bbn.kiwoom.com/rfCC1327" target="_blank" rel="noopener">키움증권 리서치 (ICSG Directory 2025 April 인용)</a>]</div>
+    </div>
+
+    <div class="card reveal">
+      <div class="card-title">피어그룹 6사 주가 추이</div>
+      <div class="card-sub">FCX가 가장 큰 운영레버리지 — '16.01 = 100 기준</div>
+      <div class="chart-box tall"><canvas id="chart-peer"></canvas></div>
+      <div class="card-source">[출처: <a href="https://bbn.kiwoom.com/rfCC1327" target="_blank" rel="noopener">키움증권 리서치 (Bloomberg 인용)</a>]</div>
+    </div>
+
+    <!-- ===== 미장 Peer 종합 비교 (NEW) ===== -->
+    <div class="card reveal">
+      <div class="card-title">미장 구리주 Peer 종합 — 6사 비교 <span style="font-size:11px;font-weight:500;color:var(--text-3);">· NYSE 위주</span></div>
+      <div class="card-sub">2026-05-02 investing.com 재크롤링 · USD 환산 시총·12M·목표가 비교 (HBM은 CAD 표시)</div>
+      <div class="tbl-wrap" style="margin-top:6px;">
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align:left;">티커</th>
+              <th>현재가</th>
+              <th>시총</th>
+              <th>P/E</th>
+              <th>배당</th>
+              <th>12M</th>
+              <th>목표가 (Up)</th>
+              <th>컨센</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="highlight">
+              <td class="left"><b>FCX</b><div style="font-size:10px;color:var(--text-3);font-weight:500;">Freeport · NYSE</div></td>
+              <td class="num">$56.55</td>
+              <td class="num">$81.3B</td>
+              <td class="num">30.1</td>
+              <td class="num">1.05%</td>
+              <td class="num pos">+56.5%</td>
+              <td class="num pos">$67.6 (+19.5%)</td>
+              <td><span style="color:var(--green);font-weight:700;">Buy</span><br><span style="font-size:10px;color:var(--text-3);">18·3·1</span></td>
+            </tr>
+            <tr>
+              <td class="left"><b>SCCO</b><div style="font-size:10px;color:var(--text-3);font-weight:500;">Southern Copper · NYSE</div></td>
+              <td class="num">$171.18</td>
+              <td class="num accent">$141.5B</td>
+              <td class="num">28.8</td>
+              <td class="num">2.37%</td>
+              <td class="num pos">+94.6%</td>
+              <td class="num neg">$163.5 (−4.5%)</td>
+              <td><span style="color:var(--red);font-weight:700;">Sell</span><br><span style="font-size:10px;color:var(--text-3);">2·5·9</span></td>
+            </tr>
+            <tr>
+              <td class="left"><b>BHP</b><div style="font-size:10px;color:var(--text-3);font-weight:500;">BHP Group ADR · NYSE</div></td>
+              <td class="num">$79.06</td>
+              <td class="num accent">$201.3B</td>
+              <td class="num">19.7</td>
+              <td class="num accent">3.41%</td>
+              <td class="num pos">+65.3%</td>
+              <td class="num neg">$67.1 (−15.2%)</td>
+              <td><span style="color:var(--purple-700);font-weight:700;">Hold</span><br><span style="font-size:10px;color:var(--text-3);">2·4·2</span></td>
+            </tr>
+            <tr>
+              <td class="left"><b>RIO</b><div style="font-size:10px;color:var(--text-3);font-weight:500;">Rio Tinto ADR · NYSE</div></td>
+              <td class="num">$100.58</td>
+              <td class="num accent">$171.9B</td>
+              <td class="num">16.6</td>
+              <td class="num accent">4.14%</td>
+              <td class="num pos">+71.4%</td>
+              <td class="num">$100.4 (≈)</td>
+              <td><span style="color:var(--green);font-weight:700;">Buy</span><br><span style="font-size:10px;color:var(--text-3);">5·3·0</span></td>
+            </tr>
+            <tr>
+              <td class="left"><b>TECK</b><div style="font-size:10px;color:var(--text-3);font-weight:500;">Teck Resources B · NYSE</div></td>
+              <td class="num">$57.95</td>
+              <td class="num">$28.4B</td>
+              <td class="num">21.0</td>
+              <td class="num">0.65%</td>
+              <td class="num pos">+70.9%</td>
+              <td class="num neg">$48.0 (−17.2%)</td>
+              <td><span style="color:var(--purple-700);font-weight:700;">Hold</span><br><span style="font-size:10px;color:var(--text-3);">1·3·0</span></td>
+            </tr>
+            <tr>
+              <td class="left"><b>HBM</b><div style="font-size:10px;color:var(--text-3);font-weight:500;">Hudbay · NYSE/TSX</div></td>
+              <td class="num">C$31.02</td>
+              <td class="num">C$12.4B</td>
+              <td class="num">16.3</td>
+              <td class="num">0.07%</td>
+              <td class="num pos" style="color:var(--purple-700);">+214.5%</td>
+              <td class="num pos">C$41.0 (+32.1%)</td>
+              <td><span style="color:var(--green);font-weight:700;">S.Buy</span><br><span style="font-size:10px;color:var(--text-3);">19·0·0</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="quote" style="margin-top:14px;font-size:12px;">
+        <b>핵심 읽기 (미장 위주):</b> ① <b>SCCO</b>는 미장 구리 1위 시총(<b>$141.5B</b>)이지만 컨센은 <b style="color:var(--red);">Sell</b> — 12M +94.6% 선반영. ② <b>HBM</b>은 12M <b style="color:var(--purple-700);">+214%</b>로 전 종목 압도(애널 19/0/0 만장일치 Buy), 단 시총 작아 변동성 큼. ③ <b>BHP·RIO</b>는 종합광산이라 구리 비중 30~40%대 — 배당주 성격 강함(3~4%). ④ FCX는 시총·12M 모두 중간 — Grasberg 회복 시 catch-up 여지 가장 큼.
+      </div>
+      <div class="card-source">[출처: investing.com 6종목 재크롤링 —
+        <a href="https://www.investing.com/equities/freeport-mcm" target="_blank" rel="noopener">FCX</a> ·
+        <a href="https://www.investing.com/equities/southern-copper-corp." target="_blank" rel="noopener">SCCO</a> ·
+        <a href="https://www.investing.com/equities/bhp-billiton-ltd-nyse-exch" target="_blank" rel="noopener">BHP</a> ·
+        <a href="https://www.investing.com/equities/rio-tinto-plc-exch" target="_blank" rel="noopener">RIO</a> ·
+        <a href="https://www.investing.com/equities/teck-cominco" target="_blank" rel="noopener">TECK</a> ·
+        <a href="https://www.investing.com/equities/hudbay-minerals" target="_blank" rel="noopener">HBM</a>]
+      </div>
+    </div>
+
+    <!-- ===== Antofagasta 비교 (LSE, 참고용으로 유지) ===== -->
+    <div class="card reveal">
+      <div class="card-title">참고: 칠레 1위 민간 구리회사 (Antofagasta · LSE)
+        <span style="font-size:10px;font-weight:500;color:var(--text-3);">· £ 표시 · 미장 비교 어려움</span>
+      </div>
+      <div class="card-sub">FY25 EBITDA $5.2B 사상 최고 (+52%), 단 실생산은 가이던스 미달</div>
+      <div class="compare">
+        <div class="col">
+          <h4>FY25 실적 <span style="font-size:9px;font-weight:500;color:var(--text-3);">· HL · stockanalysis</span></h4>
+          <div class="row"><span class="l">매출</span><span class="v">$8.62B (+30.4%)</span></div>
+          <div class="row"><span class="l">EBITDA</span><span class="v" style="color:var(--purple-600);">$5.2B (+52%, 사상최고)</span></div>
+          <div class="row"><span class="l">EBITDA 마진</span><span class="v">60.3%</span></div>
+          <div class="row"><span class="l">세전이익</span><span class="v">$3.16B (+53%)</span></div>
+          <div class="row"><span class="l">순이익</span><span class="v">$1.33B (+60.2%)</span></div>
+          <div class="row"><span class="l">EPS</span><span class="v">$1.00 (+60.2%)</span></div>
+          <div class="row"><span class="l">영업현금흐름</span><span class="v">$4.3B (+30%)</span></div>
+          <div class="row"><span class="l">CAPEX</span><span class="v">$3.7B</span></div>
+          <div class="row"><span class="l">현금/유동자산</span><span class="v">$4.9B</span></div>
+          <div class="row"><span class="l">순부채/EBITDA</span><span class="v">0.53x</span></div>
+          <div class="row"><span class="l"><b>실 구리 생산</b></span><span class="v" style="color:var(--red);">653.7kt (−1.6%, 미달)</span></div>
+        </div>
+        <div class="col">
+          <h4>2026 가이던스 · 시세 <span style="font-size:9px;font-weight:500;color:var(--text-3);">· investing.com 재크롤링</span></h4>
+          <div class="row"><span class="l">주가</span><span class="v">3,551p (변동 ≈0)</span></div>
+          <div class="row"><span class="l">시가총액</span><span class="v">£35.01B</span></div>
+          <div class="row"><span class="l">P/E (TTM)</span><span class="v">36.08</span></div>
+          <div class="row"><span class="l">12M 수익률</span><span class="v" style="color:var(--green);">+112.06%</span></div>
+          <div class="row"><span class="l">52주 범위</span><span class="v">1,663 ~ 4,475p</span></div>
+          <div class="row"><span class="l">평균 목표가</span><span class="v" style="color:var(--red);">3,499p (−1.5%)</span></div>
+          <div class="row"><span class="l">컨센서스</span><span class="v">Buy 5·Hold 11·Sell 5 (Neutral)</span></div>
+          <div class="row"><span class="l">'26 구리 생산</span><span class="v" style="color:var(--purple-600);">650-700 kt</span></div>
+          <div class="row"><span class="l">'26 캐시코스트</span><span class="v">$2.30-2.50/lb</span></div>
+          <div class="row"><span class="l">'26 net 캐시코스트</span><span class="v">$1.15-1.35/lb</span></div>
+          <div class="row"><span class="l">'26 CAPEX</span><span class="v">$3.4B (Zaldívar 제외)</span></div>
+        </div>
+      </div>
+      <div class="quote" style="margin-top:14px;font-size:12px;">
+        <b>핵심 시그널:</b> EBITDA는 사상 최고이나 <b style="color:var(--red);">2025 실 생산 653.7kt로 가이던스 미달</b> (-1.6% YoY).
+        FCX Grasberg 사고와 더해 글로벌 정광 공급 타이트닝 → 컨센서스 코멘트는 "Neutral" 우위.
+        <span style="color:var(--text-3);font-size:11px;">※ LSE/£ 표시라 미장 직접 비교는 어려움 — 위 미장 6사 표를 우선 참고.</span>
+      </div>
+      <div class="card-source">[출처:
+        <a href="https://www.hl.co.uk/shares/stock-market-news/company--news/archive/antofagasta-fy-ebitda-hits-new-high-on-strong-copper-prices" target="_blank" rel="noopener">HL FY 실적</a> ·
+        <a href="https://stockanalysis.com/quote/lon/ANTO/" target="_blank" rel="noopener">stockanalysis.com</a> ·
+        <a href="https://www.investing.com/equities/antofagasta" target="_blank" rel="noopener">investing.com</a>]</div>
+    </div>
+  </section>
+
+  <!-- ===== 6. ANALYST COMMENT (트래킹 + 코멘트 + Bull/Bear) ===== -->
+  <section id="comment">
+    <div class="section-head"><h2>분석 코멘트</h2><span class="sub">트래킹 · 저평가 vs Grasberg 재개 연기 · Bull/Bear</span></div>
+
+    <div class="card reveal">
+      <div class="card-title">2026 트래킹 포인트</div>
+      <div class="card-sub">트리거 이벤트 타임라인</div>
+      <div class="timeline">
+        <div class="ev">
+          <div class="date">2025-09-08 (PAST)</div>
+          <div class="title">Grasberg Block Cave 사고</div>
+          <div class="desc">머드러시로 사망 2 · 실종 5. Force majeure 선언, 채굴 전면 중단. 글로벌 공급 52.5만톤 증발 (25-26 합산).</div>
+        </div>
+        <div class="ev">
+          <div class="date">2026 Q2</div>
+          <div class="title">Grasberg 단계 재가동 시작</div>
+          <div class="desc">Block 2·3 ramp-up. Big Gossan / Deep MLZ 광산 우선 재개.</div>
+        </div>
+        <div class="ev">
+          <div class="date">2026-06-30</div>
+          <div class="title">미국 상무부 구리 관세 최종 판단</div>
+          <div class="desc">정제동 27년 15% / 28년 30% 관세 인상 일정 확정. FCX 미국 자산 마진 추가 확장.</div>
+        </div>
+        <div class="ev">
+          <div class="date">2026-07-16</div>
+          <div class="title">FCX 차기 분기 실적 발표</div>
+          <div class="desc">분기 가이던스 충족 여부가 26년 주가 향방의 핵심 변수.</div>
+        </div>
+        <div class="ev">
+          <div class="date">2026 H2</div>
+          <div class="title">Grasberg 정상가동 대비 65% 회복 목표 (이전 85%에서 후퇴)</div>
+          <div class="desc">metal.com (2026-04) 기준 회복 가이던스 추가 하향.</div>
+        </div>
+        <div class="ev">
+          <div class="date">2027</div>
+          <div class="title">정제동 관세 15% 발효</div>
+          <div class="desc">미국 내 광산 (Morenci 등) 추가 마진 확장.</div>
+        </div>
+        <div class="ev">
+          <div class="date">2030</div>
+          <div class="title">글로벌 구리 생산 정점 (33Mt)</div>
+          <div class="desc">이후 수요 증가에도 공급 둔화 → 2040년 1,000만톤 deficit 구조화.</div>
+        </div>
+      </div>
+      <div class="card-source">[출처: <a href="https://bbn.kiwoom.com/rfCC1327" target="_blank" rel="noopener">키움증권 리서치 (S&amp;P · FCX IR 인용)</a>]</div>
+    </div>
+
+
+    <div class="card reveal">
+      <div class="card-title">📌 코멘트 1 · Grasberg 재개 일정 후퇴</div>
+      <div class="card-sub">2026 정상가동 회복률 전망 변화</div>
+      <div class="chart-box short" style="height:160px;"><canvas id="chart-recovery"></canvas></div>
+      <div class="chips" style="margin-top:8px;">
+        <span class="chip">매출 가이던스: 34억→<b style="color:var(--red);">31억 lb</b></span>
+        <span class="chip">금: 80만→<b style="color:var(--red);">65만 oz</b></span>
+      </div>
+      <div class="card-source">[출처: <a href="https://news.metal.com/newscontent/103874362-Freeport-Cuts-Copper-Output-Forecast-on-Slower-Grasberg-Recovery-中文快讯" target="_blank" rel="noopener">metal.com (2026-04)</a>]</div>
+    </div>
+
+    <div class="card reveal">
+      <div class="card-title">📌 코멘트 2 · Morgan Stanley 다운그레이드 (2026-04-24)</div>
+      <div class="card-sub">"장기 전망은 양호하나 Grasberg ramp-up 속도가 예상보다 느림"</div>
+      <div class="compare">
+        <div class="col" style="background:var(--red-bg);">
+          <h4 style="color:var(--red);">변경 후</h4>
+          <div class="row"><span class="l">투자의견</span><span class="v" style="color:var(--red);">Equal-weight</span></div>
+          <div class="row"><span class="l">목표주가</span><span class="v" style="color:var(--red);">$66</span></div>
+          <div class="row"><span class="l">FY26 EPS</span><span class="v">$2.94</span></div>
+          <div class="row"><span class="l">FY27 EPS</span><span class="v">$4.15</span></div>
+          <div class="row"><span class="l">FY26 EBITDA</span><span class="v">$11.4B</span></div>
+          <div class="row"><span class="l">FY27 EBITDA</span><span class="v">$14.7B</span></div>
+        </div>
+        <div class="col">
+          <h4>변경 전</h4>
+          <div class="row"><span class="l">투자의견</span><span class="v">Overweight</span></div>
+          <div class="row"><span class="l">목표주가</span><span class="v">$70</span></div>
+          <div class="row"><span class="l">하향폭</span><span class="v" style="color:var(--red);">−$4 (-5.7%)</span></div>
+          <div class="row"><span class="l">근거</span><span class="v" style="font-size:10px;">인도네시아 우려</span></div>
+          <div class="row"><span class="l">단기 부담</span><span class="v" style="font-size:10px;">생산 지연 + 원가↑</span></div>
+          <div class="row"><span class="l">장기 시각</span><span class="v" style="font-size:10px;">"여전히 양호"</span></div>
+        </div>
+      </div>
+      <div class="card-source">[출처: <a href="https://www.investing.com/news/analyst-ratings/morgan-stanley-downgrades-freeportmcmoran-on-indonesia-concerns-4636561" target="_blank" rel="noopener">Investing.com Analyst Ratings</a>]</div>
+    </div>
+
+    <div class="card reveal">
+      <div class="card-title">📌 코멘트 3 · MS의 EPS 추정은 키움보다 높음 (저평가 시그널)</div>
+      <div class="card-sub">현재가 $61.17 기준 forward PER로 보면 저평가권</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th>EPS 추정 ($)</th><th>FY26E</th><th>FY27E</th><th>FY27 PER</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="left">키움 컨센서스</td><td class="num">2.60</td><td class="num">3.30</td><td class="num">18.5x</td></tr>
+            <tr class="highlight"><td class="left"><b>Morgan Stanley</b></td><td class="num accent">2.94</td><td class="num accent">4.15</td><td class="num pos">14.7x</td></tr>
+            <tr><td class="left">증감</td><td class="pos">+13%</td><td class="pos">+26%</td><td class="num">−</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="quote" style="margin-top:12px;font-size:12px;">
+        <b>MS의 메시지:</b> "회사 펀더멘털은 좋다, 단지 Grasberg 진도가 느려 단기 모멘텀이 약하다."
+        사이클 광업주의 정상 PER 12~20x 밴드에서 <b>하단권 = 저평가 영역</b>. 다만 사이클 둔화 시 EPS 자체가 빠르게 깎이는 점 유의.
+      </div>
+    </div>
+
+    <div class="card reveal">
+      <div class="card-title">📌 코멘트 4 · 인도네시아 정부 MOU (8-K/A · 2026-02-18)</div>
+      <div class="card-sub">정정공시 2026-02-24, MOU 전문 추가</div>
+      <ul style="list-style:none;padding:0;">
+        <li style="padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;">
+          <span class="chip" style="margin-right:8px;">합의 1</span>
+          PT Freeport Indonesia 채광권을 <b>life-of-mine 기간으로 연장</b> (10년마다 재평가)
+        </li>
+        <li style="padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;">
+          <span class="chip" style="margin-right:8px;">합의 2</span>
+          현재 IUPK 조건의 <b>'nail-down' 불변 조항</b> 유지
+        </li>
+        <li style="padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;">
+          <span class="chip" style="margin-right:8px;">합의 3</span>
+          향후 5년간 <b style="color:var(--purple-600);">$10B 투자 약정</b>
+        </li>
+        <li style="padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;">
+          <span class="chip" style="margin-right:8px;">합의 4</span>
+          <b>2041년 정부에 12% 지분 무상양도</b> (인수자가 후속 투자비 장부가로 상환)
+        </li>
+        <li style="padding:8px 0;font-size:12px;">
+          <span class="chip red" style="margin-right:8px;">단서</span>
+          인니 정부의 수정 IUPK 발급·추가 승인 <b>조건부</b> — 정치 리스크 완전 해소 아님
+        </li>
+      </ul>
+      <div class="card-source">[출처: <a href="https://www.stocktitan.net/sec-filings/FCX/8-k-a-freeport-mcmoran-inc-amends-material-event-report-a1954f387c0c.html" target="_blank" rel="noopener">Stocktitan · SEC 8-K/A</a>]</div>
+    </div>
+
+    <div class="card" style="background:linear-gradient(135deg,var(--purple-50) 0%,var(--purple-100) 100%);">
+      <div class="card-title" style="color:var(--purple-700);">🎯 종합 코멘트</div>
+      <ul style="list-style:none;padding:0;font-size:12.5px;line-height:1.6;">
+        <li style="padding:6px 0;"><b style="color:var(--green);">밸류에이션:</b> forward PER 14.7~18.5x — 사이클 광업주 밴드 하단</li>
+        <li style="padding:6px 0;"><b style="color:var(--red);">단기 모멘텀:</b> Grasberg 재개 지연 (85%→65%)으로 회의론 우세</li>
+        <li style="padding:6px 0;"><b style="color:var(--purple-600);">결정 변수:</b> 26년 2분기 ramp-up 진척도 → 충족 시 빠른 리레이팅, 미달 시 추가 다운그레이드</li>
+        <li style="padding:6px 0;"><b style="color:var(--purple-700);">포지션 시사:</b> "저평가지만 트리거 대기" — 분할 진입·실적 확인 후 비중 확대 전략에 유리</li>
+      </ul>
+    </div>
+
+    <!-- Bull / Bear (분석 코멘트 하위) -->
+    <div class="section-head" style="margin-top:18px;"><h2 style="font-size:15px;">Bull / Bear 점검표</h2><span class="sub">투자 판단</span></div>
+    <div class="bb-grid reveal-stagger">
+      <div class="bb bull">
+        <h3>Bull Thesis</h3>
+        <ul>
+          <li>AI · 전동화 슈퍼사이클 핵심 수혜</li>
+          <li>미국 본사 · 자산 → 자원안보·관세 정책 수혜</li>
+          <li>Grasberg 회복 시 볼륨 + 가격 동시 상방</li>
+          <li>FY26E OPM 33.7% → FY27E 39.9% 점프</li>
+          <li>26년 정련구리 -150kt 적자 전환 + 장기 deficit</li>
+          <li>Antofagasta FY25 EBITDA +52% — 사이클 가동 입증</li>
+          <li>22 분석가 평균 목표가 $67.90 (+19% upside)</li>
+        </ul>
+      </div>
+      <div class="bb bear">
+        <h3>Bear / 리스크</h3>
+        <ul>
+          <li>MS 다운그레이드 ($70→$66, OW→EW)</li>
+          <li>Grasberg 회복 85%→65%로 추가 후퇴</li>
+          <li>구리 매출 컷: 34억→31억 lb</li>
+          <li>금 컷: 80만→65만 oz</li>
+          <li>Antofagasta 25년 실 생산 가이던스 미달</li>
+          <li>인니 IUPK 추가 승인 조건부 (정치 리스크)</li>
+          <li>2041년 12% 지분 무상양도 약정</li>
+          <li>이미 사상 최고권 — 추격매수 부담</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SOURCES EMBED ===== -->
+  <section id="sources">
+    <div class="section-head"><h2>참고 자료</h2><span class="sub">12개 출처 · 클릭 시 새 탭</span></div>
+    <div class="src-grid">
+
+      <div class="src-card invest reveal">
+        <div class="domain"><span class="favi">i</span> investing.com</div>
+        <div class="ttl"><a href="https://www.investing.com/equities/freeport-mcm" target="_blank" rel="noopener">Freeport-McMoRan (FCX) — Live Equity Page</a></div>
+        <div class="desc">실시간 시세 $56.55 (−2.13%), 시총 $81.29B, P/E 30.13, 12M +56.47%. 평균 목표가 $67.57 (+19.5% upside, 22 분석가, Buy 18·Hold 3·Sell 1).</div>
+        <div class="meta"><span>Live · NYSE</span><a href="https://www.investing.com/equities/freeport-mcm" target="_blank" rel="noopener">원문 보기 ↗</a></div>
+      </div>
+
+      <div class="src-card invest reveal">
+        <div class="domain"><span class="favi">i</span> investing.com</div>
+        <div class="ttl"><a href="https://www.investing.com/equities/southern-copper-corp." target="_blank" rel="noopener">Southern Copper (SCCO) — Live Equity Page</a></div>
+        <div class="desc">미장 구리 시총 1위 $141.46B. 시세 $171.18 (−0.30%), P/E 28.80, 배당 2.37%, 12M +94.64%. 컨센 Sell 우위 (Buy 2·Hold 5·Sell 9, 16 분석가).</div>
+        <div class="meta"><span>Live · NYSE</span><a href="https://www.investing.com/equities/southern-copper-corp." target="_blank" rel="noopener">원문 보기 ↗</a></div>
+      </div>
+
+      <div class="src-card invest reveal">
+        <div class="domain"><span class="favi">i</span> investing.com</div>
+        <div class="ttl"><a href="https://www.investing.com/equities/bhp-billiton-ltd-nyse-exch" target="_blank" rel="noopener">BHP Group ADR (BHP) — Live NYSE</a></div>
+        <div class="desc">시총 $201.31B (peer 최대). 시세 $79.06 (−0.30%), P/E 19.67, 배당 3.41%, 12M +65.27%. 목표가 $67.07 (-15.2%, Hold 우위). 종합광산 — 구리 비중 30%대.</div>
+        <div class="meta"><span>Live · NYSE ADR</span><a href="https://www.investing.com/equities/bhp-billiton-ltd-nyse-exch" target="_blank" rel="noopener">원문 보기 ↗</a></div>
+      </div>
+
+      <div class="src-card invest reveal">
+        <div class="domain"><span class="favi">i</span> investing.com</div>
+        <div class="ttl"><a href="https://www.investing.com/equities/rio-tinto-plc-exch" target="_blank" rel="noopener">Rio Tinto ADR (RIO) — Live NYSE</a></div>
+        <div class="desc">시세 $100.58 (+0.10%), 시총 $171.85B, P/E 16.56, 배당 4.14% (peer 최고). 12M +71.39%. 목표가 $100.44 (≈), 컨센 Buy (5·3·0).</div>
+        <div class="meta"><span>Live · NYSE ADR</span><a href="https://www.investing.com/equities/rio-tinto-plc-exch" target="_blank" rel="noopener">원문 보기 ↗</a></div>
+      </div>
+
+      <div class="src-card invest reveal">
+        <div class="domain"><span class="favi">i</span> investing.com</div>
+        <div class="ttl"><a href="https://www.investing.com/equities/teck-cominco" target="_blank" rel="noopener">Teck Resources Class B (TECK) — Live NYSE</a></div>
+        <div class="desc">시세 $57.95 (−0.82%), 시총 $28.39B, P/E 21.00, 배당 0.65%, 12M +70.94%. 목표가 $48 (-17.2%, Hold). Q1'26 EPS $1.75로 49.6% beat, EBITDA C$2.1B.</div>
+        <div class="meta"><span>Live · NYSE</span><a href="https://www.investing.com/equities/teck-cominco" target="_blank" rel="noopener">원문 보기 ↗</a></div>
+      </div>
+
+      <div class="src-card invest reveal">
+        <div class="domain"><span class="favi">i</span> investing.com</div>
+        <div class="ttl"><a href="https://www.investing.com/equities/hudbay-minerals" target="_blank" rel="noopener">HudBay Minerals (HBM) — Live TSX/NYSE</a></div>
+        <div class="desc">시세 C$31.02 (−1.27%), 시총 C$12.4B, P/E 16.27, 12M <b>+214.46%</b>. 목표가 C$40.96 (+32.1%), 19/0/0 Strong Buy 만장일치. Q1'26 net debt C$440M→C$6M, copper 27.9kt.</div>
+        <div class="meta"><span>Live · NYSE/TSX</span><a href="https://www.investing.com/equities/hudbay-minerals" target="_blank" rel="noopener">원문 보기 ↗</a></div>
+      </div>
+
+      <div class="src-card invest reveal">
+        <div class="domain"><span class="favi">i</span> investing.com</div>
+        <div class="ttl"><a href="https://www.investing.com/equities/antofagasta" target="_blank" rel="noopener">Antofagasta (ANTO) — Live LSE (참고)</a></div>
+        <div class="desc">£ 표시 (LSE) 종목 — 미장 직접 비교 어려움. 시세 3,551p (+0.04%), 시총 £35.01B, P/E 36.08, 12M +112.06%. 목표가 3,499p (-1.5%), Neutral (Buy 5·Hold 11·Sell 5).</div>
+        <div class="meta"><span>Live · LSE</span><a href="https://www.investing.com/equities/antofagasta" target="_blank" rel="noopener">원문 보기 ↗</a></div>
+      </div>
+
+      <div class="src-card hl reveal">
+        <div class="domain"><span class="favi">HL</span> hl.co.uk</div>
+        <div class="ttl"><a href="https://www.hl.co.uk/shares/shares-search-results/a/antofagasta-plc-ordinary-5p" target="_blank" rel="noopener">Antofagasta plc Ordinary 5p — Shares Search</a></div>
+        <div class="desc">주가 3,568p, 시가총액 £35.01bn, 배당수익률 1.35%, 발행주식 985.86M, 순이익 $1.33bn.</div>
+        <div class="meta"><span>Live · ENG</span><a href="https://www.hl.co.uk/shares/shares-search-results/a/antofagasta-plc-ordinary-5p" target="_blank" rel="noopener">원문 보기 ↗</a></div>
+      </div>
+
+      <div class="src-card invest reveal">
+        <div class="domain"><span class="favi">i</span> investing.com</div>
+        <div class="ttl"><a href="https://www.investing.com/news/analyst-ratings/morgan-stanley-downgrades-freeportmcmoran-on-indonesia-concerns-4636561" target="_blank" rel="noopener">Morgan Stanley Downgrades FCX on Indonesia Concerns</a></div>
+        <div class="desc">Overweight → Equal-weight, 목표가 $70 → $66. 다만 EPS 추정은 FY26 $2.94 / FY27 $4.15로 키움보다 높음(저평가 시그널).</div>
+        <div class="meta"><span>2026-04-24 · ENG</span><a href="https://www.investing.com/news/analyst-ratings/morgan-stanley-downgrades-freeportmcmoran-on-indonesia-concerns-4636561" target="_blank" rel="noopener">원문 보기 ↗</a></div>
+      </div>
+
+      <div class="src-card metal reveal">
+        <div class="domain"><span class="favi">M</span> news.metal.com</div>
+        <div class="ttl"><a href="https://news.metal.com/newscontent/103874362-Freeport-Cuts-Copper-Output-Forecast-on-Slower-Grasberg-Recovery-中文快讯" target="_blank" rel="noopener">Freeport Cuts Copper Output Forecast on Slower Grasberg Recovery</a></div>
+        <div class="desc">2026 정상가동 회복률 전망 85% → 65%로 추가 하향. 글로벌 공급 전망 추가 위축 (역설적으로 가격엔 호재).</div>
+        <div class="meta"><span>2026-04 · ENG/CN</span><a href="https://news.metal.com/newscontent/103874362-Freeport-Cuts-Copper-Output-Forecast-on-Slower-Grasberg-Recovery-中文快讯" target="_blank" rel="noopener">원문 보기 ↗</a></div>
+      </div>
+
+      <div class="src-card sec reveal">
+        <div class="domain"><span class="favi">SEC</span> stocktitan.net</div>
+        <div class="ttl"><a href="https://www.stocktitan.net/sec-filings/FCX/8-k-a-freeport-mcmoran-inc-amends-material-event-report-a1954f387c0c.html" target="_blank" rel="noopener">FCX 8-K/A — Amends Material Event Report</a></div>
+        <div class="desc">인도네시아 정부 MOU 전문 추가. 채광권 life-of-mine 연장, 5년간 $10B 투자, 2041년 12% 지분 무상양도. IUPK 추가 승인 조건부.</div>
+        <div class="meta"><span>2026-02-24 · ENG</span><a href="https://www.stocktitan.net/sec-filings/FCX/8-k-a-freeport-mcmoran-inc-amends-material-event-report-a1954f387c0c.html" target="_blank" rel="noopener">원문 보기 ↗</a></div>
+      </div>
+
+      <div class="src-card hl reveal">
+        <div class="domain"><span class="favi">HL</span> hl.co.uk</div>
+        <div class="ttl"><a href="https://www.hl.co.uk/shares/stock-market-news/company--news/archive/antofagasta-fy-ebitda-hits-new-high-on-strong-copper-prices" target="_blank" rel="noopener">Antofagasta FY EBITDA Hits New High on Strong Copper Prices</a></div>
+        <div class="desc">FY25 EBITDA $5.2B (+52%, 사상최고), 매출 $8.62B (+30.4%), 순이익 $1.33B (+60.2%). 단 실 생산 653.7kt로 가이던스 미달.</div>
+        <div class="meta"><span>2026-02-17 · ENG</span><a href="https://www.hl.co.uk/shares/stock-market-news/company--news/archive/antofagasta-fy-ebitda-hits-new-high-on-strong-copper-prices" target="_blank" rel="noopener">원문 보기 ↗</a></div>
+      </div>
+
+      <div class="src-card kiwoom reveal">
+        <div class="domain"><span class="favi">키</span> bbn.kiwoom.com</div>
+        <div class="ttl"><a href="https://bbn.kiwoom.com/rfCC1327" target="_blank" rel="noopener">프리포트 맥모란 — 사상 최고치 경신한 구리 가격의 최대 수혜주</a></div>
+        <div class="desc">키움증권 리서치센터 · 이종형·손예빈 · 미국기업분석. 본 리포트의 핵심 데이터 출처(매출/EPS 컨센서스, ICSG 수급, Top 20 광산, PBR 밴드).</div>
+        <div class="meta"><span>2026-01-27 · KOR</span><a href="https://bbn.kiwoom.com/rfCC1327" target="_blank" rel="noopener">원문 보기 ↗</a></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="tag-line">본 자료는 세니의 도토리 모으기 리포트입니다.</div>
+    <div class="src">
+      직접 출처:
+      <a href="https://bbn.kiwoom.com/rfCC1327" target="_blank" rel="noopener">키움증권 리서치(2026-01-27)</a> ·
+      <a href="https://www.hl.co.uk/shares/shares-search-results/a/antofagasta-plc-ordinary-5p" target="_blank" rel="noopener">Hargreaves Lansdown</a> ·
+      <a href="https://www.investing.com/equities/freeport-mcm" target="_blank" rel="noopener">Investing.com</a> ·
+      <a href="https://www.stocktitan.net/sec-filings/FCX/8-k-a-freeport-mcmoran-inc-amends-material-event-report-a1954f387c0c.html" target="_blank" rel="noopener">Stocktitan</a> ·
+      <a href="https://news.metal.com/newscontent/103874362-Freeport-Cuts-Copper-Output-Forecast-on-Slower-Grasberg-Recovery-中文快讯" target="_blank" rel="noopener">metal.com</a> ·
+      <a href="https://stockanalysis.com/quote/lon/ANTO/" target="_blank" rel="noopener">stockanalysis.com</a>
+    </div>
+    <div class="copy">© 2026 Sandy · ♡ 도토리 한 알도 신중하게 🌰 · v1.1</div>
+    <div style="margin-top:6px;"><a href="/" style="color:var(--purple-600);font-weight:600;border-bottom:1px dashed var(--purple-300);padding:1px 2px;">← 리서치 허브 홈</a></div>
+  </footer>
+
+</div>
+
+<!-- ===== FAB ===== -->
+<button class="fab" id="fab" aria-label="맨 위로 이동" title="맨 위로">
+  <svg class="progress-ring" viewBox="0 0 52 52" aria-hidden="true">
+    <circle class="track" cx="26" cy="26" r="22"></circle>
+    <circle class="bar" cx="26" cy="26" r="22"></circle>
+  </svg>
+  <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M12 19V5"/><path d="M5 12l7-7 7 7"/>
+  </svg>
+</button>
+
+<script>
+/* ===== Scroll reveal ===== */
+(function(){
+  const els = document.querySelectorAll('.reveal, .reveal-stagger');
+  if(!('IntersectionObserver' in window)){
+    els.forEach(e=>e.classList.add('visible'));
+    return;
+  }
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(en=>{
+      if(en.isIntersecting){
+        en.target.classList.add('visible');
+        io.unobserve(en.target);
+      }
+    });
+  },{threshold:.12, rootMargin:'0px 0px -8% 0px'});
+  els.forEach(e=>io.observe(e));
+})();
+
+/* ===== Sticky LNB active chip + shadow ===== */
+(function(){
+  const lnb = document.getElementById('lnb');
+  if(!lnb) return;
+  const links = Array.from(lnb.querySelectorAll('a'));
+  const sections = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  if(!sections.length) return;
+
+  function setActive(id){
+    links.forEach(a => {
+      const match = a.getAttribute('href') === '#' + id;
+      a.classList.toggle('active', match);
+      if(match){
+        const r = a.getBoundingClientRect(), pr = lnb.getBoundingClientRect();
+        if(r.left < pr.left + 12 || r.right > pr.right - 12){
+          lnb.scrollTo({left: lnb.scrollLeft + (r.left - pr.left) - 16, behavior:'smooth'});
+        }
+      }
+    });
+  }
+
+  if('IntersectionObserver' in window){
+    const visible = new Map();
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(en => visible.set(en.target.id, en.intersectionRatio));
+      let bestId = null, bestRatio = 0;
+      visible.forEach((ratio, id) => { if(ratio > bestRatio){ bestRatio = ratio; bestId = id; } });
+      if(bestId && bestRatio > 0) setActive(bestId);
+    }, { rootMargin:'-70px 0px -55% 0px', threshold:[0,.1,.25,.5,.75,1] });
+    sections.forEach(s => io.observe(s));
+  }
+
+  // shadow on scroll
+  let shadowTick = false;
+  window.addEventListener('scroll', ()=>{
+    if(shadowTick) return; shadowTick = true;
+    requestAnimationFrame(()=>{
+      lnb.classList.toggle('scrolled', window.scrollY > 8);
+      shadowTick = false;
+    });
+  }, {passive:true});
+
+  // smooth scroll for chip clicks (uses scroll-margin-top for offset)
+  links.forEach(a=>{
+    a.addEventListener('click', (e)=>{
+      const id = a.getAttribute('href').slice(1);
+      const el = document.getElementById(id);
+      if(!el) return;
+      e.preventDefault();
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      el.scrollIntoView({behavior: reduce?'auto':'smooth', block:'start'});
+      history.replaceState(null,'','#'+id);
+    });
+  });
+})();
+
+/* ===== FAB: scroll-to-top + progress ring ===== */
+(function(){
+  const fab = document.getElementById('fab');
+  const ring = fab.querySelector('.progress-ring circle.bar');
+  const R = 22, C = 2*Math.PI*R;
+  ring.setAttribute('stroke-dasharray', C);
+  ring.setAttribute('stroke-dashoffset', C);
+  let ticking = false;
+  function update(){
+    const h = document.documentElement;
+    const max = (h.scrollHeight - h.clientHeight) || 1;
+    const y = window.scrollY || h.scrollTop;
+    const p = Math.min(1, Math.max(0, y/max));
+    ring.setAttribute('stroke-dashoffset', C * (1 - p));
+    if(y > 280) fab.classList.add('show');
+    else fab.classList.remove('show');
+    ticking = false;
+  }
+  window.addEventListener('scroll', ()=>{
+    if(!ticking){ requestAnimationFrame(update); ticking = true; }
+  }, {passive:true});
+  update();
+  fab.addEventListener('click', ()=>{
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({top:0, behavior: reduce?'auto':'smooth'});
+  });
+})();
+
+/* ===== Chart.js global ===== */
+/* baby pink 키컬러 — 변수명은 PURPLE 유지(legacy), 값만 핑크로 매핑 */
+const PURPLE = '#EC4899', PURPLE_LITE = '#FBCFE8', PURPLE_DEEP = '#9D174D';
+const GREEN = '#2BA15B', RED = '#E85C5C', GOLD = '#E2B43C', NAVY = '#3D4D8F';
+const BG_GRID = '#F7E5EE', TEXT_3 = '#8A8A95';
+Chart.defaults.font.family = "'Pretendard',-apple-system,system-ui,sans-serif";
+Chart.defaults.font.size = 11;
+Chart.defaults.color = '#4A4A55';
+Chart.defaults.plugins.legend.labels.usePointStyle = true;
+Chart.defaults.plugins.legend.labels.boxWidth = 7;
+Chart.defaults.plugins.legend.labels.boxHeight = 7;
+Chart.defaults.plugins.legend.position = 'top';
+Chart.defaults.plugins.legend.align = 'end';
+Chart.defaults.animation.duration = 900;
+Chart.defaults.animation.easing = 'easeOutQuart';
+
+const gridStyle = { color: BG_GRID, borderDash: [3,3], drawBorder:false };
+
+/* ===== Lazy chart initializer ===== */
+const __lazyCharts = new Map();
+function lazyChart(id, config){ __lazyCharts.set(id, (el)=> new Chart(el, config)); }
+(function(){
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!('IntersectionObserver' in window) || reduce){
+    queueMicrotask(()=>__lazyCharts.forEach((fn,id)=>{ const el=document.getElementById(id); if(el) fn(el); }));
+    return;
+  }
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(en=>{
+      if(en.isIntersecting){
+        const id = en.target.id;
+        const fn = __lazyCharts.get(id);
+        if(fn){ fn(en.target); __lazyCharts.delete(id); }
+        io.unobserve(en.target);
+      }
+    });
+  },{threshold:.15, rootMargin:'0px 0px -5% 0px'});
+  queueMicrotask(()=>{
+    document.querySelectorAll('canvas[id^="chart-"]').forEach(c=>io.observe(c));
+  });
+})();
+
+/* ===== 1) Copper price vs FCX stock ===== */
+lazyChart('chart-price', {
+  type:'line',
+  data:{
+    labels:['16','17','18','19','20','21','22','23','24','25','26'],
+    datasets:[
+      { label:'구리 ($/t)', data:[4700,7200,5800,6000,7800,9700,7500,8400,9200,11500,13195],
+        borderColor:PURPLE_DEEP, backgroundColor:'transparent', borderWidth:2.4, tension:.35, yAxisID:'y', pointRadius:0, pointHoverRadius:4 },
+      { label:'FCX ($)', data:[10,15,12,11,26,40,30,42,45,55,61.17],
+        borderColor:PURPLE, backgroundColor:'rgba(111,78,232,.08)', borderWidth:2.4, tension:.35, yAxisID:'y1', fill:true, pointRadius:0, pointHoverRadius:4 }
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+    scales:{
+      y:{position:'left',grid:gridStyle,ticks:{callback:v=>v.toLocaleString()}},
+      y1:{position:'right',grid:{display:false},ticks:{callback:v=>'$'+v}},
+      x:{grid:{display:false}}
+    }
+  }
+});
+
+/* ===== 2) Quarterly revenue + OPM ===== */
+const qLabels = ['4Q23','1Q24','2Q24','3Q24','4Q24','1Q25','2Q25','3Q25','4Q25','1Q26E','2Q26E','3Q26E','4Q26E','1Q27E','2Q27E','3Q27E','4Q27E'];
+lazyChart('chart-earn', {
+  data:{
+    labels: qLabels,
+    datasets:[
+      { type:'bar', label:'매출 (M$)', data:[5905,6321,6624,6789,5720,5728,7582,6972,5633,5928,6519,7800,8200,7900,8500,7800,8200],
+        backgroundColor:PURPLE_LITE, borderRadius:6, yAxisID:'y' },
+      { type:'line', label:'OPM (%)', data:[20,22,26,28,21.7,18,28,28.3,14.4,26,31.9,38,40,38,40,38,40],
+        borderColor:PURPLE, backgroundColor:PURPLE, borderWidth:2.4, tension:.3, yAxisID:'y1', pointRadius:3, pointHoverRadius:5 }
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+    scales:{
+      y:{position:'left',grid:gridStyle,ticks:{callback:v=>(v/1000).toFixed(1)+'B'}},
+      y1:{position:'right',grid:{display:false},min:0,max:50,ticks:{callback:v=>v+'%'}},
+      x:{grid:{display:false},ticks:{font:{size:9}}}
+    }
+  }
+});
+
+/* ===== 3) EPS bar ===== */
+lazyChart('chart-eps', {
+  type:'bar',
+  data:{
+    labels:['FY24','FY25','FY26E','FY27E'],
+    datasets:[{
+      label:'EPS ($)', data:[1.5,1.8,2.6,3.3],
+      backgroundColor:[PURPLE_LITE,PURPLE_LITE,PURPLE,PURPLE],
+      borderRadius:8, barThickness:42
+    }]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
+    tooltip:{callbacks:{label:c=>'$'+c.parsed.y}}},
+    scales:{y:{grid:gridStyle,ticks:{callback:v=>'$'+v}},x:{grid:{display:false}}}
+  },
+  plugins:[{
+    id:'datalabels',
+    afterDatasetsDraw(c){
+      const ctx=c.ctx; ctx.font='700 11px Pretendard'; ctx.fillStyle='#1A1A1A';ctx.textAlign='center';
+      c.data.datasets[0].data.forEach((v,i)=>{
+        const m=c.getDatasetMeta(0).data[i]; if(m) ctx.fillText('$'+v.toFixed(1), m.x, m.y-6);
+      });
+    }
+  }]
+});
+
+/* ===== 4) ICSG balance ===== */
+lazyChart('chart-balance', {
+  type:'bar',
+  data:{
+    labels:['2024','2025','2026E'],
+    datasets:[{
+      label:'수급 밸런스 (kt)',
+      data:[71,178,-150],
+      backgroundColor:[PURPLE_LITE,PURPLE_LITE,RED],
+      borderRadius:8, barThickness:54
+    }]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
+    tooltip:{callbacks:{label:c=>c.parsed.y+' kt'}}},
+    scales:{y:{grid:gridStyle,ticks:{callback:v=>v+' kt'}},x:{grid:{display:false}}}
+  },
+  plugins:[{
+    id:'lbl',
+    afterDatasetsDraw(c){
+      const ctx=c.ctx;ctx.font='700 12px Pretendard';ctx.textAlign='center';
+      c.data.datasets[0].data.forEach((v,i)=>{
+        const m=c.getDatasetMeta(0).data[i]; if(!m) return;
+        ctx.fillStyle = v<0?RED:PURPLE_DEEP;
+        const y = v>=0 ? m.y-6 : m.y+18;
+        ctx.fillText((v>0?'+':'')+v+'kt', m.x, y);
+      });
+    }
+  }]
+});
+
+/* ===== 5) Donut 2024 ===== */
+lazyChart('chart-2024', {
+  type:'doughnut',
+  data:{
+    labels:['Core Economic','Energy/AI/Defense'],
+    datasets:[{ data:[68,32], backgroundColor:[PURPLE_LITE,PURPLE], borderWidth:0 }]
+  },
+  options:{responsive:true,maintainAspectRatio:false,cutout:'72%',
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.label+': '+c.parsed+'%'}}}}
+});
+
+/* ===== 6) Donut 2040 ===== */
+lazyChart('chart-2040', {
+  type:'doughnut',
+  data:{
+    labels:['Core Economic','Energy/AI/Defense'],
+    datasets:[{ data:[55,45], backgroundColor:[PURPLE_LITE,PURPLE], borderWidth:0 }]
+  },
+  options:{responsive:true,maintainAspectRatio:false,cutout:'72%',
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.label+': '+c.parsed+'%'}}}}
+});
+
+/* ===== 7) Top 10 mines (horizontal bar) ===== */
+const mineLabels = ['Escondida (CL)','Grasberg ★ (ID)','Collahuasi (CL)','Kamoa-Kakula (CD)','Morenci ★ (US)','Cerro Verde ★ (PE)','Buenavista (MX)','Antamina (PE)','Tenke Fungurume (CD)','El Teniente (CL)'];
+const mineData = [1350,800,600,600,570,550,535,450,450,401];
+const mineColors = mineData.map((_,i)=> [1,4,5].includes(i)?PURPLE:PURPLE_LITE);
+lazyChart('chart-mines', {
+  type:'bar',
+  data:{ labels:mineLabels, datasets:[{ data:mineData, backgroundColor:mineColors, borderRadius:6 }] },
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.x+' kt'}}},
+    scales:{
+      x:{grid:gridStyle,ticks:{callback:v=>v+'kt'}},
+      y:{grid:{display:false},ticks:{font:{size:10}}}
+    }
+  },
+  plugins:[{
+    id:'lbl',
+    afterDatasetsDraw(c){
+      const ctx=c.ctx;ctx.font='700 10px Pretendard';ctx.fillStyle='#1A1A1A';ctx.textAlign='left';
+      c.data.datasets[0].data.forEach((v,i)=>{
+        const m=c.getDatasetMeta(0).data[i]; if(m) ctx.fillText(v.toLocaleString(), m.x+4, m.y+3);
+      });
+    }
+  }]
+});
+
+/* ===== 9) Recovery downgrade chart ===== */
+lazyChart('chart-recovery', {
+  type:'bar',
+  data:{
+    labels:['이전 가이던스','현재 가이던스 (26-04)'],
+    datasets:[{
+      label:'2026 정상가동 대비 회복률 (%)',
+      data:[85, 65],
+      backgroundColor:[PURPLE_LITE, RED],
+      borderRadius:8, barThickness:60
+    }]
+  },
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.x+'%'}}},
+    scales:{
+      x:{grid:gridStyle,min:0,max:100,ticks:{callback:v=>v+'%'}},
+      y:{grid:{display:false}}
+    }
+  },
+  plugins:[{
+    id:'recoveryLbl',
+    afterDatasetsDraw(c){
+      const ctx=c.ctx;ctx.font='800 13px Pretendard';ctx.textAlign='left';
+      c.data.datasets[0].data.forEach((v,i)=>{
+        const m=c.getDatasetMeta(0).data[i]; if(!m) return;
+        ctx.fillStyle = i===1?RED:PURPLE_DEEP;
+        ctx.fillText(v+'%', m.x+6, m.y+4);
+      });
+    }
+  }]
+});
+
+/* ===== 8) Peer chart ===== */
+lazyChart('chart-peer', {
+  type:'line',
+  data:{
+    labels:['16','17','18','19','20','21','22','23','24','25','26'],
+    datasets:[
+      { label:'FCX', data:[100,180,140,130,290,520,400,540,610,800,1620], borderColor:PURPLE, backgroundColor:'transparent', borderWidth:2.6, tension:.35, pointRadius:0 },
+      { label:'BHP', data:[100,140,150,180,210,260,290,330,310,330,400], borderColor:NAVY, backgroundColor:'transparent', borderWidth:1.6, tension:.35, pointRadius:0 },
+      { label:'Anglo American', data:[100,160,180,200,220,330,310,290,260,290,420], borderColor:GREEN, backgroundColor:'transparent', borderWidth:1.6, tension:.35, pointRadius:0 },
+      { label:'Rio Tinto', data:[100,150,180,210,260,310,310,330,290,310,400], borderColor:GOLD, backgroundColor:'transparent', borderWidth:1.6, tension:.35, pointRadius:0 },
+      { label:'Antofagasta', data:[100,140,130,150,210,300,260,280,300,360,560], borderColor:RED, backgroundColor:'transparent', borderWidth:1.6, tension:.35, pointRadius:0 },
+      { label:'Glencore', data:[100,150,140,130,140,210,260,280,260,290,360], borderColor:'#999', backgroundColor:'transparent', borderWidth:1.6, tension:.35, pointRadius:0 }
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{boxWidth:6,boxHeight:6,font:{size:10}}}},
+    interaction:{mode:'index',intersect:false},
+    scales:{ y:{grid:gridStyle,ticks:{callback:v=>v}}, x:{grid:{display:false}} }
+  }
+});
+</script>
+
+</body>
+</html>
