@@ -70,6 +70,13 @@ export default function HomePage() {
               </div>
               <span className="arrow">→</span>
             </a>
+            <Link className="report-link" href="/auto">
+              <div className="l">
+                🤖 자동매매 (dry-run)
+                <small>도구 · VR·무한매수·DCA 전략 실행 · Toss 연동 토대</small>
+              </div>
+              <span className="arrow">→</span>
+            </Link>
             <a className="report-link" href="/fcx">
               <div className="l">
                 FCX · 구리 산업 동향

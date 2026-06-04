@@ -105,3 +105,78 @@ export const vrLinkPreviews = pgTable("vr_link_previews", {
   errorMessage: text("error_message"),
   fetchedAt: timestamp("fetched_at", { withTimezone: true }).defaultNow().notNull(),
 });
+
+/* ================================================================== */
+/* 자동매매 토대 (Toss OpenAPI 연동 — dry-run 우선)                     */
+/* ================================================================== */
+
+/** 설정된 전략 인스턴스 (VR / 무한매수 / DCA). */
+export const vrStrategies = pgTable("vr_strategies", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  kind: text("kind").notNull(), // 'vr' | 'infinite' | 'dca'
+  symbol: text("symbol").notNull(),
+  market: text("market").notNull().default("US"), // 'KR' | 'US'
+  seed: numeric("seed").notNull(), // 총 원금(풀)
+  params: jsonb("params"), // {T, band, mode, g, target, ...} 전략별 파라미터
+  active: boolean("active").default(true).notNull(),
+  dryRun: boolean("dry_run").default(true).notNull(), // 안전: 기본 모의
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+/** 전략 실행 예약 (스크롤 피커 선택 → 주기/일시). */
+export const vrSchedules = pgTable("vr_schedules", {
+  id: serial("id").primaryKey(),
+  strategyId: integer("strategy_id")
+    .references(() => vrStrategies.id, { onDelete: "cascade" })
+    .notNull(),
+  kind: text("kind").notNull(), // 'weekly' | 'daily' | 'once'
+  spec: jsonb("spec"), // {weekday, hour, minute} | {datetimeIso}
+  nextRunAt: timestamp("next_run_at", { withTimezone: true }),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+/** 주문 의도 + 체결 결과 audit. clientOrderId 로 멱등. */
+export const vrOrders = pgTable(
+  "vr_orders",
+  {
+    id: bigserial("id", { mode: "number" }).primaryKey(),
+    strategyId: integer("strategy_id").references(() => vrStrategies.id),
+    clientOrderId: text("client_order_id").notNull().unique(),
+    symbol: text("symbol").notNull(),
+    side: text("side").notNull(), // 'BUY' | 'SELL'
+    orderType: text("order_type").notNull().default("MARKET"), // 'MARKET' | 'LIMIT'
+    quantity: numeric("quantity"),
+    price: numeric("price"),
+    amount: numeric("amount"),
+    // planned | dry_run | blocked | skipped | submitted | filled | failed
+    status: text("status").notNull(),
+    dryRun: boolean("dry_run").notNull().default(true),
+    reason: text("reason"),
+    raw: jsonb("raw"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    strategyIdx: index("vr_orders_strategy_idx").on(t.strategyId),
+  }),
+);
+
+/** 계좌 보유 종목 스냅샷 (Toss 계좌조회 결과 — 연결 후 적재). */
+export const vrHoldings = pgTable(
+  "vr_holdings",
+  {
+    id: bigserial("id", { mode: "number" }).primaryKey(),
+    accountSeq: text("account_seq").notNull(),
+    symbol: text("symbol").notNull(),
+    name: text("name"),
+    quantity: numeric("quantity"),
+    avgPrice: numeric("avg_price"),
+    plRate: numeric("pl_rate"),
+    rawCurrency: text("raw_currency"),
+    capturedAt: timestamp("captured_at", { withTimezone: true }).notNull(),
+  },
+  (t) => ({
+    uniqueAcctSymCaptured: unique().on(t.accountSeq, t.symbol, t.capturedAt),
+  }),
+);
