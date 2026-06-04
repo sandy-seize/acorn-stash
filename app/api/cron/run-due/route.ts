@@ -3,6 +3,7 @@ import { db, schema } from "@/lib/db";
 import { and, eq, lte } from "drizzle-orm";
 import { runStrategyOnce } from "@/lib/toss/runner";
 import { computeNextRunAt, type ScheduleKind, type ScheduleSpec } from "@/lib/schedule";
+import { sendPushToAll } from "@/lib/push";
 
 // GET /api/cron/run-due — Vercel cron 이 호출. nextRunAt<=now 인 활성 예약 실행(dry-run 기본).
 // 인증: CRON_SECRET 설정 시 Bearer 검증(Vercel cron 자동 첨부). 미설정 시 통과(로컬).
@@ -30,6 +31,17 @@ export async function GET(request: Request) {
     try {
       const r = await runStrategyOnce(s.strategyId, now);
       results.push({ scheduleId: s.id, strategyId: s.strategyId, action: r.action, status: r.status, amount: r.amount });
+      // 실제 매매 의도(BUY/SELL)면 푸시. HOLD/DUP 는 조용히.
+      if (r.action === "BUY" || r.action === "SELL") {
+        const verb = r.action === "BUY" ? "매수" : "매도";
+        const tag = r.status === "blocked" ? "⛔ 차단됨" : r.dryRun ? "(모의)" : "✅ 체결";
+        await sendPushToAll({
+          title: `🌰 ${r.symbol} ${verb} ${tag}`,
+          body: `${Math.round(r.amount).toLocaleString()}원 · ${r.reason}`,
+          url: "/auto",
+          tag: `order-${r.strategyId}`,
+        });
+      }
     } catch (e) {
       results.push({ scheduleId: s.id, strategyId: s.strategyId, error: String(e instanceof Error ? e.message : e) });
     }

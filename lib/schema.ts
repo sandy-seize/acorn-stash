@@ -162,6 +162,15 @@ export const vrOrders = pgTable(
   }),
 );
 
+/** 웹 푸시 구독 (브라우저 PushManager subscription). */
+export const vrPushSubscriptions = pgTable("vr_push_subscriptions", {
+  endpoint: text("endpoint").primaryKey(),
+  p256dh: text("p256dh").notNull(),
+  auth: text("auth").notNull(),
+  ua: text("ua"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
 /** 모의계좌 — 전략별 현재 포지션 baseline(수동 입력 또는 Toss 계좌조회 동기화). */
 export const vrPaperAccounts = pgTable("vr_paper_accounts", {
   strategyId: integer("strategy_id")

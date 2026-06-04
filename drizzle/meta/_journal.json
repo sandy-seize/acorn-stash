@@ -22,6 +22,13 @@
       "when": 1780561841821,
       "tag": "0002_glossy_puppet_master",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1780562794496,
+      "tag": "0003_perpetual_the_hunter",
+      "breakpoints": true
     }
   ]
 }

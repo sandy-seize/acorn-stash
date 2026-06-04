@@ -9,6 +9,7 @@ import { listStrategies, recentOrders, schedulesFor, paperFor } from "@/lib/toss
 import { loadSafetyConfig } from "@/lib/toss/safety";
 import { hasCredentials } from "@/lib/toss/client";
 import { AutoControls } from "@/components/auto-controls";
+import { PushToggle } from "@/components/push-toggle";
 
 export const dynamic = "force-dynamic";
 
@@ -65,6 +66,13 @@ export default async function AutoPage() {
             키 연결 후에도 <code>TOSS_DRY_RUN=false</code> 로 명시 전환해야 실주문이 가능합니다.
           </p>
         )}
+      </Section>
+
+      {/* 알림 */}
+      <Section title="알림" caption="자동매매 실행 시 웹 푸시">
+        <div className="rounded-[var(--radius-lg)] border border-[rgb(var(--border))] bg-[rgb(var(--surface))] p-3">
+          <PushToggle />
+        </div>
       </Section>
 
       {/* 전략 */}
