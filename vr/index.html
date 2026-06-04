@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#EC4899" />
+<title>VR법 운용 비서 · 도토리 모으기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
+<style>
+  :root{
+    --pink-900:#9D174D; --pink-700:#BE185D; --pink-600:#EC4899; --pink-500:#F472B6;
+    --pink-400:#F9A8D4; --pink-300:#FBCFE8; --pink-200:#FCE7F3; --pink-100:#FDF2F8; --pink-50:#FFF5F8;
+    --bg:#FBF7FA; --paper:#FFFDFB; --text:#1A1A1A; --text-2:#4A4A55; --text-3:#8A8A95; --line:#F2D9E5;
+    --buy:#15803D; --buy-bg:#ECFDF3; --buy-bd:#BBF7D0;
+    --sell:#B91C1C; --sell-bg:#FEF2F2; --sell-bd:#FECACA;
+    --hold:#92740B; --hold-bg:#FEFCE8; --hold-bd:#FEF08A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html,body{background:var(--bg);color:var(--text);font-family:'Pretendard',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;}
+  body{background-image:radial-gradient(circle at 15% 10%,var(--pink-100) 0%,transparent 30%),radial-gradient(circle at 85% 90%,var(--pink-100) 0%,transparent 30%);min-height:100vh;padding:18px 14px 60px;}
+  .wrap{max-width:460px;margin:0 auto;}
+  a{color:inherit;text-decoration:none;}
+
+  .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .top .home{font-size:12px;color:var(--text-3);font-weight:600;}
+  .stamp{display:inline-block;background:var(--pink-600);color:#fff;padding:4px 12px;border-radius:99px;font-size:10.5px;font-weight:800;letter-spacing:2px;transform:rotate(-2deg);box-shadow:0 2px 8px rgba(236,72,153,.3);}
+
+  .card{background:var(--paper);border:1px solid var(--pink-200);border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 8px 28px rgba(190,24,93,.07);}
+  .card h2{font-size:13px;font-weight:800;color:var(--pink-900);letter-spacing:-.2px;margin-bottom:14px;display:flex;align-items:center;gap:6px;}
+  .muted{color:var(--text-3);font-size:11.5px;}
+
+  label{display:block;font-size:11.5px;font-weight:700;color:var(--text-2);margin:0 0 5px;}
+  input,select{width:100%;font-family:inherit;font-size:14px;padding:10px 12px;border:1px solid var(--pink-200);border-radius:10px;background:#fff;color:var(--text);}
+  input:focus,select:focus{outline:none;border-color:var(--pink-500);box-shadow:0 0 0 3px var(--pink-100);}
+  .row{display:flex;gap:10px;}
+  .row>div{flex:1;}
+  .field{margin-bottom:12px;}
+
+  button{font-family:inherit;cursor:pointer;border:none;border-radius:10px;font-weight:700;transition:transform .12s,box-shadow .12s,opacity .12s;}
+  button:active{transform:scale(.98);}
+  .btn{padding:11px 14px;font-size:13.5px;background:var(--pink-600);color:#fff;width:100%;box-shadow:0 4px 14px rgba(236,72,153,.28);}
+  .btn.ghost{background:#fff;color:var(--pink-700);border:1px solid var(--pink-300);box-shadow:none;}
+  .btn.sm{padding:8px 12px;font-size:12px;width:auto;}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+
+  /* 가격 헤더 */
+  .price-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;}
+  .price-head .nm{font-size:15px;font-weight:800;color:var(--pink-900);}
+  .price-head .nm small{display:block;font-size:10.5px;color:var(--text-3);font-weight:600;margin-top:2px;letter-spacing:.3px;}
+  .price-head .px{font-size:26px;font-weight:800;letter-spacing:-.5px;text-align:right;line-height:1;}
+  .px .cur{font-size:13px;font-weight:700;color:var(--text-3);}
+  .chg-UP{color:var(--sell);} .chg-DOWN{color:var(--buy);} /* 국내 관습: 상승=빨강 */
+
+  /* 액션 박스 */
+  .action{border-radius:14px;padding:16px;text-align:center;margin-top:4px;}
+  .action .verb{font-size:22px;font-weight:900;letter-spacing:-.5px;}
+  .action .amt{font-size:15px;font-weight:800;margin-top:4px;}
+  .action .sub{font-size:11.5px;margin-top:6px;opacity:.85;}
+  .action.BUY{background:var(--buy-bg);border:1px solid var(--buy-bd);} .action.BUY .verb,.action.BUY .amt{color:var(--buy);}
+  .action.SELL{background:var(--sell-bg);border:1px solid var(--sell-bd);} .action.SELL .verb,.action.SELL .amt{color:var(--sell);}
+  .action.HOLD{background:var(--hold-bg);border:1px solid var(--hold-bd);} .action.HOLD .verb,.action.HOLD .amt{color:var(--hold);}
+
+  /* 상태 그리드 */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--pink-100);border-radius:12px;overflow:hidden;border:1px solid var(--pink-100);}
+  .cell{background:var(--paper);padding:11px 12px;}
+  .cell .k{font-size:10.5px;color:var(--text-3);font-weight:600;}
+  .cell .v{font-size:15px;font-weight:800;color:var(--text);margin-top:2px;letter-spacing:-.2px;}
+  .cell .v.pos{color:var(--sell);} .cell .v.neg{color:var(--buy);}
+
+  /* 진행바 */
+  .prog{height:7px;background:var(--pink-100);border-radius:99px;overflow:hidden;margin-top:6px;}
+  .prog>i{display:block;height:100%;background:linear-gradient(90deg,var(--pink-400),var(--pink-600));border-radius:99px;}
+
+  table{width:100%;border-collapse:collapse;font-size:11.5px;}
+  th,td{padding:7px 6px;text-align:right;border-bottom:1px solid var(--pink-100);}
+  th{color:var(--text-3);font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.5px;}
+  td:first-child,th:first-child{text-align:left;}
+  .tag{display:inline-block;padding:1px 7px;border-radius:99px;font-size:10px;font-weight:800;}
+  .tag.BUY{background:var(--buy-bg);color:var(--buy);} .tag.SELL{background:var(--sell-bg);color:var(--sell);}
+
+  .hide{display:none!important;}
+  .note{font-size:11px;color:var(--text-3);line-height:1.6;margin-top:10px;}
+  .warn{background:var(--hold-bg);border:1px solid var(--hold-bd);color:var(--hold);font-size:11.5px;font-weight:600;padding:9px 11px;border-radius:9px;margin-top:10px;}
+  .foot{text-align:center;font-size:10.5px;color:var(--text-3);margin-top:24px;line-height:1.7;}
+  .linkbtn{background:none;border:none;color:var(--pink-700);font-size:11.5px;font-weight:700;cursor:pointer;padding:0;text-decoration:underline;}
+  .spin{display:inline-block;width:13px;height:13px;border:2px solid var(--pink-200);border-top-color:var(--pink-600);border-radius:50%;animation:s .7s linear infinite;vertical-align:-2px;}
+  @keyframes s{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a class="home" href="/">← 🌰 도토리 모으기</a>
+    <span class="stamp">VR · 운용비서</span>
+  </div>
+
+  <!-- ===== 설정(최초/수정) ===== -->
+  <div class="card" id="setupCard">
+    <h2>⚙️ VR법 설정</h2>
+    <div class="field">
+      <label>종목 코드 / 티커</label>
+      <div class="row">
+        <div style="flex:2"><input id="in_code" placeholder="국내: 005930 · 미국: SOXL" autocomplete="off"></div>
+        <div><select id="in_market"><option value="">자동</option><option value="KR">국내</option><option value="US">미국</option></select></div>
+      </div>
+      <div class="muted" id="codeHint" style="margin-top:6px">국내주식은 6자리 숫자, 미국주식은 티커를 입력하세요.</div>
+    </div>
+    <div class="row">
+      <div class="field"><label>총 원금(풀)</label><input id="in_seed" inputmode="numeric" placeholder="10000000"></div>
+      <div class="field"><label>분할 수 (T)</label><input id="in_T" inputmode="numeric" value="40"></div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>V값 증가 방식</label>
+        <select id="in_mode">
+          <option value="linear">정액 — 매주 원금/T 씩 ↑ (백테스트 기준)</option>
+          <option value="rate">정률 — 매주 ×(1+g)</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field" id="gWrap" style="display:none"><label>주간 증가율 g (%)</label><input id="in_g" inputmode="decimal" value="1.0"></div>
+      <div class="field"><label>리밸런싱 밴드 (±%)</label><input id="in_band" inputmode="decimal" value="0"></div>
+    </div>
+    <div class="warn" id="seedHint">1회 단위(매주 목표 증가액) = 원금 ÷ T = <b id="unitPrev">—</b></div>
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button class="btn" id="saveBtn">시작하기</button>
+      <button class="btn ghost sm" id="cancelEdit" style="display:none">취소</button>
+    </div>
+    <div class="note">설정은 이 기기 브라우저(localStorage)에만 저장됩니다. 체결은 직접 증권사 앱에서 하고, 결과만 여기에 기록하세요.</div>
+  </div>
+
+  <!-- ===== 대시보드 ===== -->
+  <div id="dash" class="hide">
+
+    <!-- 가격 -->
+    <div class="card">
+      <div class="price-head">
+        <div class="nm" id="d_name">—<small id="d_code"></small></div>
+        <div class="px"><span id="d_price">—</span> <span class="cur" id="d_cur"></span></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">
+        <span class="muted" id="d_asof">—</span>
+        <button class="linkbtn" id="refreshBtn">↻ 시세 새로고침</button>
+      </div>
+    </div>
+
+    <!-- 오늘의 지시 -->
+    <div class="card">
+      <h2>📌 이번 주 리밸런싱 (<span id="d_week">1</span>주차)</h2>
+      <div class="action" id="actionBox">
+        <div class="verb" id="a_verb">—</div>
+        <div class="amt" id="a_amt"></div>
+        <div class="sub" id="a_sub"></div>
+      </div>
+      <div class="warn hide" id="cashWarn"></div>
+      <div class="prog"><i id="progBar" style="width:0%"></i></div>
+      <div class="muted" style="margin-top:6px;text-align:right">진행률 <b id="progTxt">0%</b> · 목표 V값 <b id="d_vt">—</b></div>
+
+      <div style="margin-top:16px;border-top:1px dashed var(--pink-200);padding-top:14px">
+        <label>실제 체결 결과 기록</label>
+        <div class="row">
+          <div class="field" style="margin-bottom:8px"><label class="muted">체결가</label><input id="ex_price" inputmode="decimal" placeholder="자동=현재가"></div>
+          <div class="field" style="margin-bottom:8px"><label class="muted">체결 수량(주)</label><input id="ex_qty" inputmode="decimal" placeholder="자동=추천"></div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn sm" id="execBtn" style="flex:2">추천대로 체결 반영 →</button>
+          <button class="btn ghost sm" id="skipBtn" style="flex:1">관망(주차만 +1)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 현황 -->
+    <div class="card">
+      <h2>📊 내 포지션</h2>
+      <div class="grid">
+        <div class="cell"><div class="k">보유 수량</div><div class="v" id="s_sh">—</div></div>
+        <div class="cell"><div class="k">평단가</div><div class="v" id="s_avg">—</div></div>
+        <div class="cell"><div class="k">주식 평가액</div><div class="v" id="s_val">—</div></div>
+        <div class="cell"><div class="k">현금 잔액</div><div class="v" id="s_cash">—</div></div>
+        <div class="cell"><div class="k">총 자산</div><div class="v" id="s_tot">—</div></div>
+        <div class="cell"><div class="k">평가손익</div><div class="v" id="s_pl">—</div></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:14px">
+        <button class="linkbtn" id="editBtn">⚙️ 설정 수정</button>
+        <button class="linkbtn" id="resetBtn" style="color:var(--sell)">전체 초기화</button>
+      </div>
+    </div>
+
+    <!-- 로그 -->
+    <div class="card" id="logCard">
+      <h2>🧾 거래 기록</h2>
+      <table><thead><tr><th>주차</th><th>구분</th><th>가격</th><th>수량</th><th>금액</th></tr></thead>
+        <tbody id="logBody"><tr><td colspan="5" class="muted" style="text-align:center;padding:14px">아직 기록이 없어요.</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="foot">
+    VR법(밸류 리밸런싱) 운용 보조 도구 · 투자 판단과 책임은 본인에게 있습니다.<br>
+    시세는 참고용이며 실제 체결가와 다를 수 있습니다. 🌰
+  </div>
+</div>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+const KEY="vr_state_v1";
+let S=null;        // 운용 상태(설정+포지션+로그)
+let LIVE=null;     // 최근 조회 시세 {price,currency,name,changeType,asOf,source,code}
+
+/* ---------- 저장/로드 ---------- */
+function load(){ try{ S=JSON.parse(localStorage.getItem(KEY)); }catch(e){ S=null; } }
+function save(){ localStorage.setItem(KEY, JSON.stringify(S)); }
+
+/* ---------- 포맷 ---------- */
+function isKRW(){ return (S?S.currency:'KRW')==='KRW'; }
+function money(x){
+  if(x==null||isNaN(x)) return '—';
+  if(isKRW()) return Math.round(x).toLocaleString('ko-KR')+'원';
+  return '$'+Number(x).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function qty(x){
+  if(x==null||isNaN(x)) return '—';
+  // 국내는 정수주 관습, 미국은 소수주 허용 → 보기 좋게
+  return isKRW() ? Math.round(x).toLocaleString('ko-KR')+'주'
+                 : (Math.round(x*10000)/10000).toLocaleString('en-US')+'주';
+}
+
+/* ---------- VR법 엔진 ---------- */
+function unit(){ return S.seed / S.T; }
+function targetV(week){
+  if(S.mode==='rate'){
+    const g=S.g/100;
+    return Math.min(unit()*Math.pow(1+g, week-1), S.seed);
+  }
+  return Math.min(unit()*week, S.seed); // linear
+}
+// 현재 주차의 권고 계산 (현재가 p 기준)
+function recommend(p){
+  const Vt=targetV(S.week);
+  const val=S.shares*p;
+  const band=S.band/100;
+  const lo=Vt*(1-band), hi=Vt*(1+band);
+  let action='HOLD', amount=0, shares=0, shortfall=0;
+  if(val < lo){
+    let need=Vt-val;
+    const buyable=Math.min(need, S.cash);
+    if(buyable < need-1e-6) shortfall=need-buyable;
+    action='BUY'; amount=Math.max(buyable,0); shares=amount/p;
+  } else if(val > hi){
+    action='SELL'; amount=val-Vt; shares=amount/p;
+  }
+  return {Vt, val, action, amount, shares, shortfall};
+}
+
+/* ---------- 시세 조회 ---------- */
+async function fetchPrice(){
+  const code=S.code, market=S.market||'';
+  const r=await fetch(`/api/price?code=${encodeURIComponent(code)}&market=${market}`);
+  if(!r.ok){ const e=await r.json().catch(()=>({})); throw new Error(e.error||('HTTP '+r.status)); }
+  return r.json();
+}
+
+/* ---------- 렌더 ---------- */
+function showSetup(edit){
+  $('#dash').classList.add('hide');
+  $('#setupCard').classList.remove('hide');
+  $('#cancelEdit').style.display = edit ? '' : 'none';
+  $('#saveBtn').textContent = edit ? '저장' : '시작하기';
+  if(edit && S){
+    $('#in_code').value=S.code; $('#in_market').value=S.market||'';
+    $('#in_seed').value=S.seed; $('#in_T').value=S.T; $('#in_mode').value=S.mode;
+    $('#in_g').value=S.g; $('#in_band').value=S.band;
+    onModeChange(); updateUnitPreview();
+  }
+}
+function renderDash(){
+  $('#setupCard').classList.add('hide');
+  $('#dash').classList.remove('hide');
+  $('#d_code').textContent = (S.code||'') + (S.market?(' · '+ (S.market==='KR'?'국내':'미국')):'');
+  $('#d_name').childNodes[0].nodeValue = S.name||S.code||'종목';
+  $('#d_cur').textContent = S.currency||'';
+  $('#d_week').textContent = S.week;
+
+  // 시세
+  if(LIVE){
+    $('#d_price').textContent = isKRW()? Math.round(LIVE.price).toLocaleString('ko-KR') : Number(LIVE.price).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    $('#d_price').className = LIVE.changeType?('chg-'+LIVE.changeType):'';
+    $('#d_asof').textContent = LIVE.asOf? ('기준 '+new Date(LIVE.asOf).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})+' · '+(LIVE.source==='toss'?'토스':'Yahoo')) : '';
+  }
+  const p = LIVE? LIVE.price : null;
+
+  // 권고
+  const box=$('#actionBox'), cw=$('#cashWarn');
+  if(p){
+    const r=recommend(p);
+    box.className='action '+r.action;
+    $('#a_verb').textContent = r.action==='BUY'?'매수':r.action==='SELL'?'매도':'관망';
+    if(r.action==='HOLD'){ $('#a_amt').textContent=''; $('#a_sub').textContent='평가액이 목표 V값 밴드 안에 있어요. 이번 주는 쉬어갑니다.'; }
+    else{
+      $('#a_amt').textContent = money(r.amount)+'  ≈  '+qty(r.shares);
+      $('#a_sub').textContent = (r.action==='BUY'?'목표 V값까지 채우도록 매수':'목표 V값 초과분만큼 매도')+' (현재가 '+money(p)+' 기준)';
+    }
+    if(r.shortfall>0){ cw.classList.remove('hide'); cw.innerHTML='⚠️ 현금이 부족해 목표만큼 못 삽니다. 부족분 '+money(r.shortfall)+'. 가능한 만큼만 매수하세요.'; }
+    else cw.classList.add('hide');
+    $('#d_vt').textContent = money(r.Vt);
+    // 체결 입력 placeholder
+    $('#ex_price').placeholder = '자동=현재가 '+(isKRW()?Math.round(p):p);
+    $('#ex_qty').placeholder = '자동=추천 '+(Math.round(r.shares*10000)/10000);
+    $('#execBtn').dataset.action=r.action; $('#execBtn').dataset.amt=r.amount; $('#execBtn').dataset.sh=r.shares; $('#execBtn').dataset.p=p;
+    $('#execBtn').textContent = r.action==='HOLD'? '관망 반영 → 다음 주' : '추천대로 체결 반영 →';
+    $('#execBtn').disabled=false;
+  } else {
+    box.className='action HOLD'; $('#a_verb').innerHTML='<span class="spin"></span>'; $('#a_amt').textContent=''; $('#a_sub').textContent='시세 불러오는 중…';
+    $('#execBtn').disabled=true;
+  }
+
+  // 진행률
+  const prog=Math.min(100, Math.round((S.week-1)/S.T*100));
+  $('#progBar').style.width=prog+'%'; $('#progTxt').textContent=prog+'%';
+
+  // 포지션
+  const val = p? S.shares*p : null;
+  const avg = S.shares>0? S.cost/S.shares : 0;
+  const tot = (p? val:0)+S.cash;
+  const pl = p? (val - S.cost) : null;
+  $('#s_sh').textContent=qty(S.shares);
+  $('#s_avg').textContent=S.shares>0?money(avg):'—';
+  $('#s_val').textContent=val!=null?money(val):'—';
+  $('#s_cash').textContent=money(S.cash);
+  $('#s_tot').textContent=p!=null?money(tot):'—';
+  const ple=$('#s_pl');
+  if(pl!=null){ const pct=S.cost>0?(pl/S.cost*100):0; ple.textContent=money(pl)+' ('+(pl>=0?'+':'')+pct.toFixed(1)+'%)'; ple.className='v '+(pl>=0?'pos':'neg'); }
+  else { ple.textContent='—'; ple.className='v'; }
+
+  renderLog();
+}
+function renderLog(){
+  const b=$('#logBody');
+  if(!S.log||!S.log.length){ b.innerHTML='<tr><td colspan="5" class="muted" style="text-align:center;padding:14px">아직 기록이 없어요.</td></tr>'; return; }
+  b.innerHTML = S.log.slice().reverse().map(e=>
+    `<tr><td>${e.week}</td><td><span class="tag ${e.action}">${e.action==='BUY'?'매수':'매도'}</span></td><td>${money(e.price)}</td><td>${qty(e.shares)}</td><td>${money(e.amount)}</td></tr>`
+  ).join('');
+}
+
+/* ---------- 동작 ---------- */
+async function refresh(){
+  try{
+    LIVE=await fetchPrice();
+    // 종목명 보정
+    if(LIVE.name && S.name!==LIVE.name){ S.name=LIVE.name; save(); }
+    if(LIVE.currency && S.currency!==LIVE.currency){ S.currency=LIVE.currency; save(); }
+    renderDash();
+  }catch(e){
+    $('#a_verb').textContent='시세 오류'; $('#a_sub').textContent=String(e.message||e)+' — 잠시 후 다시 시도하세요.';
+    $('#actionBox').className='action SELL';
+  }
+}
+function applyExecution(action, price, shares, amount){
+  // 포지션 갱신
+  if(action==='BUY'){ S.shares+=shares; S.cost+=amount; S.cash-=amount; }
+  else if(action==='SELL'){
+    const avg=S.shares>0?S.cost/S.shares:price;
+    S.cost-=shares*avg; S.shares-=shares; if(S.shares<1e-9){S.shares=0;S.cost=0;}
+    S.cash+=amount;
+  }
+  if(action!=='HOLD'){ S.log.push({week:S.week, action, price, shares, amount, ts:Date.now()}); }
+  S.week+=1; S.lastRebalance=Date.now();
+  save(); renderDash();
+}
+
+/* ---------- 설정 화면 핸들러 ---------- */
+function onModeChange(){ $('#gWrap').style.display = $('#in_mode').value==='rate'?'':'none'; }
+function updateUnitPreview(){
+  const seed=parseFloat($('#in_seed').value)||0, T=parseFloat($('#in_T').value)||0;
+  $('#unitPrev').textContent = (seed>0&&T>0)? (Math.round(seed/T).toLocaleString('ko-KR')) : '—';
+}
+
+/* ---------- 이벤트 바인딩 ---------- */
+$('#in_mode').addEventListener('change', onModeChange);
+$('#in_seed').addEventListener('input', updateUnitPreview);
+$('#in_T').addEventListener('input', updateUnitPreview);
+
+$('#saveBtn').addEventListener('click', ()=>{
+  const code=$('#in_code').value.trim();
+  const seed=parseFloat($('#in_seed').value);
+  const T=parseInt($('#in_T').value,10);
+  if(!code){ alert('종목 코드/티커를 입력하세요.'); return; }
+  if(!(seed>0)){ alert('총 원금을 입력하세요.'); return; }
+  if(!(T>=1)){ alert('분할 수는 1 이상이어야 합니다.'); return; }
+  const editing = !!(S && S.shares!=null);
+  const base = editing ? S : { shares:0, cost:0, cash:seed, week:1, log:[], currency:'KRW' };
+  // 설정값 반영 (편집 시 포지션/로그/주차는 보존)
+  base.code=code.toUpperCase();
+  base.market=$('#in_market').value;
+  base.seed=seed; base.T=T;
+  base.mode=$('#in_mode').value; base.g=parseFloat($('#in_g').value)||1; base.band=parseFloat($('#in_band').value)||0;
+  if(!editing){ base.cash=seed; }
+  S=base; save();
+  LIVE=null; renderDash(); refresh();
+});
+$('#cancelEdit').addEventListener('click', ()=>{ renderDash(); });
+$('#refreshBtn').addEventListener('click', refresh);
+$('#editBtn').addEventListener('click', ()=>showSetup(true));
+$('#resetBtn').addEventListener('click', ()=>{ if(confirm('모든 설정·포지션·기록을 삭제할까요?')){ localStorage.removeItem(KEY); S=null; LIVE=null; showSetup(false); $('#in_code').value=''; $('#in_seed').value=''; } });
+
+$('#execBtn').addEventListener('click', ()=>{
+  const action=$('#execBtn').dataset.action;
+  const p=parseFloat($('#execBtn').dataset.p);
+  if(action==='HOLD'){ applyExecution('HOLD'); return; }
+  // 사용자 입력값 우선, 없으면 추천값
+  let price=parseFloat($('#ex_price').value); if(!(price>0)) price=p;
+  let shares=parseFloat($('#ex_qty').value); if(!(shares>0)) shares=parseFloat($('#execBtn').dataset.sh);
+  if(!(shares>0)){ alert('체결 수량을 확인하세요.'); return; }
+  const amount=price*shares;
+  if(action==='BUY' && amount>S.cash+1e-6 && !confirm('현금 잔액('+money(S.cash)+')을 초과합니다. 그래도 기록할까요?')) return;
+  applyExecution(action, price, shares, amount);
+  $('#ex_price').value=''; $('#ex_qty').value='';
+});
+$('#skipBtn').addEventListener('click', ()=>applyExecution('HOLD'));
+
+/* ---------- 시작 ---------- */
+load();
+if(S && S.code){ renderDash(); refresh(); }
+else { showSetup(false); }
+</script>
+</body>
+</html>
