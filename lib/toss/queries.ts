@@ -13,3 +13,20 @@ export async function recentOrders(strategyId: number, limit = 12) {
     .orderBy(desc(schema.vrOrders.id))
     .limit(limit);
 }
+
+export async function schedulesFor(strategyId: number) {
+  return db
+    .select()
+    .from(schema.vrSchedules)
+    .where(eq(schema.vrSchedules.strategyId, strategyId))
+    .orderBy(desc(schema.vrSchedules.id));
+}
+
+export async function paperFor(strategyId: number) {
+  const [row] = await db
+    .select()
+    .from(schema.vrPaperAccounts)
+    .where(eq(schema.vrPaperAccounts.strategyId, strategyId))
+    .limit(1);
+  return row ?? null;
+}

@@ -75,3 +75,7 @@ a {
     scrollbar-color: rgb(var(--border-strong)) transparent;
   }
 }
+
+/* 스크롤 피커용 — 스크롤바 숨김 */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

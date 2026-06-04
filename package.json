@@ -11,7 +11,8 @@
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "seed:vr": "tsx --env-file=.env.local scripts/seed-vr.ts",
-    "demo:dryrun": "tsx --env-file=.env.local scripts/dryrun-demo.ts"
+    "demo:dryrun": "tsx --env-file=.env.local scripts/dryrun-demo.ts",
+    "test:cron": "tsx --env-file=.env.local scripts/cron-test.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4",

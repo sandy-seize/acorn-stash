@@ -5,9 +5,10 @@
 import Link from "next/link";
 import type { Route } from "next";
 import { PageHeader, Section, Pill, DataTable, Th, Td } from "@/components/ui";
-import { listStrategies, recentOrders } from "@/lib/toss/queries";
+import { listStrategies, recentOrders, schedulesFor, paperFor } from "@/lib/toss/queries";
 import { loadSafetyConfig } from "@/lib/toss/safety";
 import { hasCredentials } from "@/lib/toss/client";
+import { AutoControls } from "@/components/auto-controls";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +31,11 @@ export default async function AutoPage() {
   const creds = hasCredentials();
   const live = creds && !cfg.dryRun;
   const strategies = await listStrategies();
-  const ordersByStrat = await Promise.all(strategies.map((s) => recentOrders(s.id)));
+  const [ordersByStrat, schedulesByStrat, paperByStrat] = await Promise.all([
+    Promise.all(strategies.map((s) => recentOrders(s.id))),
+    Promise.all(strategies.map((s) => schedulesFor(s.id))),
+    Promise.all(strategies.map((s) => paperFor(s.id))),
+  ]);
 
   return (
     <main className="mx-auto max-w-5xl px-4 pb-16 pt-8 sm:px-6 sm:pt-12">
@@ -108,6 +113,27 @@ export default async function AutoPage() {
                   )}
                 </tbody>
               </DataTable>
+
+              <AutoControls
+                strategyId={s.id}
+                paper={
+                  paperByStrat[i]
+                    ? {
+                        shares: String(paperByStrat[i]!.shares),
+                        avgCost: String(paperByStrat[i]!.avgCost),
+                        cash: String(paperByStrat[i]!.cash),
+                        asOf: paperByStrat[i]!.asOf.toISOString(),
+                      }
+                    : null
+                }
+                schedules={schedulesByStrat[i].map((sc) => ({
+                  id: sc.id,
+                  kind: sc.kind,
+                  spec: (sc.spec ?? {}) as { weekday?: number; hour?: number; minute?: number; datetimeIso?: string },
+                  nextRunAt: sc.nextRunAt ? sc.nextRunAt.toISOString() : null,
+                  active: sc.active,
+                }))}
+              />
             </div>
           ))
         )}

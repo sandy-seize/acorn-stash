@@ -162,6 +162,19 @@ export const vrOrders = pgTable(
   }),
 );
 
+/** 모의계좌 — 전략별 현재 포지션 baseline(수동 입력 또는 Toss 계좌조회 동기화). */
+export const vrPaperAccounts = pgTable("vr_paper_accounts", {
+  strategyId: integer("strategy_id")
+    .primaryKey()
+    .references(() => vrStrategies.id, { onDelete: "cascade" }),
+  shares: numeric("shares").notNull().default("0"),
+  avgCost: numeric("avg_cost").notNull().default("0"), // 총 취득원가(평단=avgCost/shares)
+  cash: numeric("cash").notNull().default("0"),
+  asOf: timestamp("as_of", { withTimezone: true }).defaultNow().notNull(),
+  source: text("source").notNull().default("manual"), // 'manual' | 'toss'
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
 /** 계좌 보유 종목 스냅샷 (Toss 계좌조회 결과 — 연결 후 적재). */
 export const vrHoldings = pgTable(
   "vr_holdings",

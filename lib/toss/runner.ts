@@ -44,11 +44,22 @@ export async function runStrategyOnce(strategyId: number, now: Date = new Date()
     .where(eq(schema.vrOrders.strategyId, strategyId))
     .orderBy(schema.vrOrders.id);
 
-  let shares = 0;
-  let cost = 0;
-  let cash = seed;
+  // 모의계좌 baseline(수동 입력/동기화)이 있으면 그 시점을 기준점으로,
+  // 이후 발생한 주문만 누적. 없으면 seed 현금 + 전체 로그.
+  const [paper] = await db
+    .select()
+    .from(schema.vrPaperAccounts)
+    .where(eq(schema.vrPaperAccounts.strategyId, strategyId))
+    .limit(1);
+
+  let shares = paper ? Number(paper.shares) : 0;
+  let cost = paper ? Number(paper.avgCost) : 0;
+  let cash = paper ? Number(paper.cash) : seed;
+  const baseTime = paper ? paper.asOf.getTime() : 0;
+
   for (const o of prior) {
     if (!EXECUTED.includes(o.status)) continue;
+    if (paper && o.createdAt.getTime() <= baseTime) continue; // baseline 이전 주문은 이미 반영됨
     const qty = Number(o.quantity ?? 0);
     const amt = Number(o.amount ?? 0);
     if (o.side === "BUY") {
