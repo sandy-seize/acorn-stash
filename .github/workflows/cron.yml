@@ -1,0 +1,27 @@
+name: cron-run-due
+# Vercel Hobby cron 은 하루 1회가 한계 → 외부(GitHub Actions)에서 보호된
+# /api/cron/run-due 를 자주 호출해 예약 자동매매를 더 촘촘히 실행(dry-run).
+# 참고: GitHub 스케줄은 부하에 따라 수 분 지연/스킵될 수 있고, 레포 60일 비활성 시 비활성화됨.
+
+on:
+  schedule:
+    - cron: "*/10 * * * *" # 매 10분 (UTC)
+  workflow_dispatch: {} # 수동 실행 버튼
+
+concurrency:
+  group: cron-run-due
+  cancel-in-progress: false
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: hit run-due
+        run: |
+          code=$(curl -s -m 30 -o /tmp/out -w "%{http_code}" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "https://acorn-stash.vercel.app/api/cron/run-due")
+          echo "status=$code"
+          cat /tmp/out
+          echo
+          test "$code" = "200"
