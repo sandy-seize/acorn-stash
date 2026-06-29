@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SECTORS, sectorHref } from "@/lib/sectors";
 
 const css = `
 .stage{min-height:90vh;display:flex;align-items:center;justify-content:center;padding:32px 18px;
@@ -35,6 +36,18 @@ const css = `
 .report-link:hover .arrow{transform:translateX(3px);}
 .foot{margin-top:30px;padding-top:18px;border-top:1px dashed var(--pink-200);font-size:11px;color:var(--text-3);
   text-align:right;letter-spacing:.2px;}
+.group-label{margin:24px 0 10px;font-size:10.5px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+  color:var(--text-3);display:flex;align-items:center;gap:10px;}
+.group-label::after{content:'';flex:1;height:1px;background:var(--pink-200);}
+.sector-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.sector-btn{display:flex;align-items:center;gap:9px;padding:11px 12px;
+  background:linear-gradient(135deg,var(--pink-50) 0%,var(--pink-100) 100%);border:1px solid var(--pink-200);
+  border-radius:12px;transition:transform .15s,border-color .15s,box-shadow .15s;}
+.sector-btn:hover{transform:translateY(-1px);border-color:var(--pink-400);box-shadow:0 6px 16px rgba(236,72,153,.13);}
+.sector-btn .se{font-size:18px;line-height:1;flex:none;}
+.sector-btn .sl{font-size:12.5px;font-weight:700;color:var(--pink-900);letter-spacing:-.2px;line-height:1.25;}
+.sector-btn .sl small{display:block;font-size:10px;font-weight:500;color:var(--text-3);margin-top:2px;
+  letter-spacing:0;line-height:1.3;}
 `;
 
 export default function HomePage() {
@@ -77,13 +90,21 @@ export default function HomePage() {
               </div>
               <span className="arrow">→</span>
             </Link>
-            <a className="report-link" href="/fcx">
-              <div className="l">
-                FCX · 구리 산업 동향
-                <small>2026-05-02 · 미장 peer 6사 비교</small>
-              </div>
-              <span className="arrow">→</span>
-            </a>
+          </div>
+
+          <div className="group-label">Sector Research</div>
+          <div className="sector-grid">
+            {SECTORS.map((s) => (
+              <a className="sector-btn" key={s.slug} href={sectorHref(s)}>
+                <span className="se" aria-hidden>
+                  {s.emoji}
+                </span>
+                <span className="sl">
+                  {s.label}
+                  <small>{s.summary}</small>
+                </span>
+              </a>
+            ))}
           </div>
 
           <div className="foot">♡ 도토리 한 알도 신중하게 🌰</div>
