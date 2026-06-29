@@ -56,13 +56,13 @@ export default function HomePage() {
           </p>
 
           <div className="reports-mini">
-            <Link className="report-link" href="/stocks">
+            <a className="report-link" href="https://www.tossinvest.com" target="_blank" rel="noopener noreferrer">
               <div className="l">
                 📈 종목 모니터
-                <small>도구 · 관심 종목 가격·등락·버즈 한눈에</small>
+                <small>토스증권 바로가기 · 관심 종목 가격·등락 한눈에</small>
               </div>
               <span className="arrow">→</span>
-            </Link>
+            </a>
             <a className="report-link" href="/vr">
               <div className="l">
                 🧮 VR법 운용 비서
