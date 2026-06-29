@@ -92,11 +92,57 @@ const SEMICONDUCTOR: SectorContent = {
   ],
 };
 
+const AEROSPACE: SectorContent = {
+  valueChain: [
+    "발사체 (로켓)",
+    "위성 제조",
+    "위성통신 서비스",
+    "지상장비·단말",
+    "우주탐사·인프라",
+  ],
+  stocks: [
+    {
+      symbol: "SPCX",
+      name: "스페이스X (SpaceX, SPCX)",
+      exchange: "NASDAQ",
+      thesis: "발사 시장 독점적 cadence + 스타링크 현금창출 — 2026.6 美 역사상 최대 IPO로 상장",
+      asOf: "2026년 6월 기준",
+      metrics: [
+        { label: "현재가", value: "$153.23 (+0.15%)" },
+        { label: "시가총액", value: "$2.02T" },
+        { label: "52주", value: "$135.00 – $225.64" },
+        { label: "매출(연)", value: "약 $19.3B" },
+        { label: "PER", value: "적자 (-51.66)" },
+        { label: "평균 목표주가", value: "$187.80 (+22.6%)" },
+        { label: "상장일", value: "2026-06-12 (공모가 $135)" },
+      ],
+      points: [
+        "2026-06-12 나스닥 상장 — 약 $85.7B 조달(미 역사상 최대 IPO), 시초가 $150. 상장 직후 시가총액 약 $2조. (investing.com, Via Satellite)",
+        "스타링크가 매출 엔진 — 2025년 $11.4B(+48%), 전체 매출의 60~70% 차지. 2026.2 가입자 1,000만+ 돌파(160개국), 2026.5 요금 인상(+$10/월)로 수익화 국면 전환. (Sacra, 글로벌이코노믹)",
+        "스타십 V3 첫 비행 성공(2026-05-22) — LEO 150톤 탑재, NASA 아르테미스·화성 겨냥. 발사 단가의 구조적 하락 동력. (검색 종합)",
+        "2025년 팰컨 165회·스타십 5회 발사 — 글로벌 발사 시장을 사실상 독점하는 발사 빈도. (검색 종합)",
+        "아직 순손실(PER 음수) — 성장 재투자 단계. 밸류에이션은 스타링크 가입자·발사량 성장 기대를 선반영. (investing.com)",
+      ],
+      risks: [
+        "상장 직후 변동성 큼(밴드 $135–$225). 적자 지속·대규모 캐펙스 부담.",
+        "머스크 키맨 리스크 + 규제(주파수 배분·발사 인허가)·위성 과밀 경쟁.",
+      ],
+      sources: [
+        { label: "investing.com — SPCX 종목 지표", url: "https://kr.investing.com/equities/spacex" },
+        { label: "Via Satellite — SpaceX 재무·IPO 분석", url: "https://www.satellitetoday.com/finance/2026/06/03/assessing-spacex-finances-addressable-market-and-the-ai-pitch-ahead-of-ipo/" },
+        { label: "Sacra — SpaceX revenue·valuation", url: "https://sacra.com/c/spacex/" },
+        { label: "글로벌이코노믹 — 스타링크 매출 비중", url: "https://www.g-enews.com/article/Global-Biz/2026/05/2026052305105457612bd56fbc3c_1" },
+      ],
+    },
+  ],
+};
+
 export const SECTORS: Sector[] = [
   { slug: "semiconductor", label: "반도체", emoji: "🔬", summary: "파운드리·메모리·소부장 밸류체인 동향", content: SEMICONDUCTOR },
   { slug: "battery", label: "이차전지", emoji: "🔋", summary: "셀·소재·전고체 차세대 배터리" },
   { slug: "bio", label: "바이오", emoji: "🧬", summary: "신약·CDMO·플랫폼 바이오" },
   { slug: "robotics", label: "로보틱스", emoji: "🦾", summary: "휴머노이드·협동로봇·자동화" },
+  { slug: "aerospace", label: "우주·항공", emoji: "🚀", summary: "발사체·위성통신·우주 인프라", content: AEROSPACE },
   { slug: "copper", label: "구리", emoji: "⛏️", summary: "전기동 수급·FCX peer 6사 비교", href: "/fcx" },
 ];
 
