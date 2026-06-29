@@ -11,6 +11,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "seed:vr": "tsx --env-file=.env.local scripts/seed-vr.ts",
+    "refresh:toss": "tsx --env-file=.env.local scripts/refresh-toss-prices.ts",
     "demo:dryrun": "tsx --env-file=.env.local scripts/dryrun-demo.ts",
     "test:cron": "tsx --env-file=.env.local scripts/cron-test.ts"
   },
