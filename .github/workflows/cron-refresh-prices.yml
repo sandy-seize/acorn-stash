@@ -1,11 +1,10 @@
 name: cron-refresh-prices
-# 토스 Open API 실시세를 종목 모니터에 주기 갱신(현재가·1D 등락·거래량·시총).
-# Vercel Hobby cron 은 하루 1회 한계 → GitHub Actions 로 촘촘히 호출.
-# 52주 고저 같은 펀더멘털은 cron-refresh-fundamentals(일 1회)에서 별도 처리.
+# 토스 Open API 실시세 주기 갱신용. ⚠️ 비활성: 토스 키가 IP 화이트리스트라
+# GitHub/Vercel 데이터센터 IP는 403 "IP address not allowed". 자동 스케줄을
+# 끄고 수동(workflow_dispatch)만 남김 — 허용된 egress(고정 IP 프록시 등)가
+# 생기면 schedule 을 되살릴 것. 평상시 갱신은 로컬 launchd 가 담당.
 
 on:
-  schedule:
-    - cron: "*/30 * * * *" # 매 30분 (UTC)
   workflow_dispatch: {}
 
 concurrency:

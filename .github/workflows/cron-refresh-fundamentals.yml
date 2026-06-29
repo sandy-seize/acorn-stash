@@ -1,10 +1,8 @@
 name: cron-refresh-fundamentals
-# 52주(≈252거래일) 최고/최저를 하루 1회 갱신. 캔들 페이지네이션이 무거워
-# 시세(30분)와 분리. P/E 등은 토스 Open API 미제공이라 적재 대상 아님.
+# 52주(≈252거래일) 최고/최저 갱신용. ⚠️ 비활성: 토스 키 IP 화이트리스트로
+# 데이터센터 IP 차단(403). 수동(workflow_dispatch)만 — 평상시는 로컬 launchd.
 
 on:
-  schedule:
-    - cron: "15 6 * * *" # 매일 06:15 UTC (KST 15:15)
   workflow_dispatch: {}
 
 concurrency:
