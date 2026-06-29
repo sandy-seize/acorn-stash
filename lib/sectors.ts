@@ -89,6 +89,104 @@ const SEMICONDUCTOR: SectorContent = {
         { label: "investing.com — MU 종목 지표", url: "https://kr.investing.com/equities/micron-tech" },
       ],
     },
+    {
+      symbol: "NVDA",
+      name: "엔비디아 (NVIDIA, NVDA)",
+      exchange: "NASDAQ",
+      thesis: "AI 가속기 사실상 표준 — 메모리·파운드리 수요를 끌어올리는 수요측 엔진",
+      asOf: "2026년 6월 기준",
+      metrics: [
+        { label: "현재가", value: "$192.53 (-1.64%)" },
+        { label: "시가총액", value: "$4.66T" },
+        { label: "52주", value: "$151.49 – $236.54" },
+        { label: "PER", value: "29.76배" },
+        { label: "EPS", value: "$6.53" },
+        { label: "평균 목표주가", value: "$300.59 (+56%)" },
+      ],
+      points: [
+        "데이터센터 AI 가속기 사실상 독점 — 매출 $253.49B, 매출총이익률 74.1%로 AI 반도체 지배력 확인. (investing.com)",
+        "애널리스트 61명 중 58명 매수·평균 목표가 +56% 여력 — 강한 컨센서스. 차기 실적 2026-08-26. (investing.com)",
+        "HBM 최대 수요처 — 가속기 1장당 HBM 탑재량 증가가 마이크론·SK하이닉스·삼성 메모리 슈퍼사이클의 근원 수요. (밸류체인 연계)",
+      ],
+      risks: [
+        "기술적 지표 단기 약세 + 밸류 부담(시총 $4.66T) — AI 캐펙스 둔화·관세/수출규제 노출.",
+      ],
+      sources: [
+        { label: "investing.com — NVDA 종목 지표", url: "https://kr.investing.com/equities/nvidia-corp" },
+      ],
+    },
+    {
+      symbol: "TSM",
+      name: "TSMC (대만 반도체, TSM)",
+      exchange: "NYSE (ADR)",
+      thesis: "AI 칩 위탁생산 사실상 독점 — 첨단공정 캐파가 AI 공급의 병목이자 해법",
+      asOf: "2026년 6월 기준",
+      metrics: [
+        { label: "현재가", value: "$432.35" },
+        { label: "시가총액", value: "$2.24T" },
+        { label: "52주", value: "$221.18 – $476.79" },
+        { label: "PER", value: "27.4배 (fwd)" },
+        { label: "평균 목표주가", value: "$478.95 (최고 $700)" },
+      ],
+      points: [
+        "글로벌 파운드리 독점적 지위 — 엔비디아·애플 등 AI·모바일 첨단칩 위탁생산의 핵심. (stockanalysis)",
+        "목표주가 상향 러시 — BofA $490→$590, 서스케하나 $500→$575. 3/2nm 캐파 증설이 AI 공급 병목 해소 키. (investing.com)",
+      ],
+      risks: [
+        "지정학(양안) 리스크·고객 집중도. 첨단공정 캐펙스 부담과 환율 변수.",
+      ],
+      sources: [
+        { label: "investing.com — TSM 종목", url: "https://www.investing.com/equities/taiwan-semicond.manufacturing-co" },
+        { label: "stockanalysis — TSM 지표", url: "https://stockanalysis.com/stocks/tsm/" },
+      ],
+    },
+    {
+      symbol: "000660",
+      name: "SK하이닉스 (000660)",
+      exchange: "KOSPI",
+      thesis: "HBM 선두주자 — '영업이익률의 SK하이닉스', 엔비디아 주력 공급사",
+      asOf: "2026년 6월 기준",
+      metrics: [
+        { label: "현재가", value: "약 ₩2,542,000" },
+        { label: "52주", value: "₩245,000 – ₩2,987,000" },
+        { label: "목표주가", value: "₩3,800,000 (Buy)" },
+      ],
+      points: [
+        "HBM 시장 선두 — 엔비디아 가속기 주력 공급. 1분기 매출 50조원 돌파·사상 최대 영업이익 경신 중. (KB)",
+        "2027년 HBM 가격 전년比 100%+ 상승 전망(범용 DRAM 대비 마진 격차 축소). (KB)",
+        "한국 메모리 2강 중 '수익성 우위' 포지션 — 마이크론 서프라이즈가 업종 센티먼트 견인. (news1)",
+      ],
+      sources: [
+        { label: "KBthink — SK하이닉스 목표주가 리포트", url: "https://kbthink.com/securities-view.html?docId=20260623190056390K" },
+        { label: "investing.com — SK하이닉스(000660)", url: "https://www.investing.com/equities/sk-hynix-inc" },
+        { label: "토스증권 — 000660 실시간", url: "https://www.tossinvest.com/stocks/A000660" },
+      ],
+    },
+    {
+      symbol: "005930",
+      name: "삼성전자 (005930)",
+      exchange: "KOSPI",
+      thesis: "'규모의 삼성' — HBM4·SOCAMM2 첫 양산으로 메모리 슈퍼사이클 본격 합류",
+      asOf: "2026년 6월 기준",
+      metrics: [
+        { label: "현재가", value: "약 ₩317,250" },
+        { label: "목표주가", value: "₩330,000 (상향, Buy)" },
+        { label: "2026 매출(E)", value: "약 478조원" },
+        { label: "2026 영업익(E)", value: "약 148조원" },
+      ],
+      points: [
+        "HBM4·SOCAMM2 첫 양산 출하로 DS부문 실적 개선 — 2026년 HBM 매출 전년比 3배+ 전망. (키움)",
+        "절대 규모 우위('규모의 삼성') — 파운드리·메모리·세트 종합 포트폴리오. 목표주가 26만→33만원 상향. (키움)",
+      ],
+      risks: [
+        "HBM 경쟁력에서 SK하이닉스 추격 중 — 고객 검증·수율이 관건. 파운드리 적자 부담.",
+      ],
+      sources: [
+        { label: "키움증권 — 삼성전자 목표주가 상향 리포트", url: "https://bbn.kiwoom.com/rfCR12086" },
+        { label: "유진투자증권 — 삼성전자 리포트", url: "https://www.eugenefn.com/common/files/amail//20260130_005930_sophie.yim_114.pdf" },
+        { label: "토스증권 — 005930 실시간", url: "https://www.tossinvest.com/stocks/A005930" },
+      ],
+    },
   ],
 };
 
