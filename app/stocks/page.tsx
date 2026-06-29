@@ -69,6 +69,7 @@ export default async function StocksPage() {
                   <Th sticky className="w-[160px] min-w-[160px] max-w-[160px]">Company</Th>
                   <Th numeric>Price</Th>
                   <Th numeric>1D %</Th>
+                  <Th numeric>52W L–H</Th>
                   <Th numeric>Mkt Cap</Th>
                   <Th numeric>Volume</Th>
                   <Th numeric>P/E</Th>
@@ -118,11 +119,56 @@ function TickerRowItem({ row, index }: { row: VrTickerRow; index: number }) {
           <Pill tone={changeTone}>{formatChangePct(change)}</Pill>
         )}
       </Td>
+      <Week52Cell low={row.fifty_two_week_low} high={row.fifty_two_week_high} price={row.price} cur={cur} />
       <Td numeric>{formatMarketCapNative(row.market_cap_native, cur)}</Td>
       <Td numeric muted>{formatVolume(row.volume)}</Td>
       <Td numeric>{formatMetric(row.pe_ttm, 2)}</Td>
       <Td muted>{row.category}</Td>
       <Td muted>{row.source}</Td>
     </tr>
+  );
+}
+
+function Week52Cell({
+  low,
+  high,
+  price,
+  cur,
+}: {
+  low: number | null;
+  high: number | null;
+  price: number | null;
+  cur: string;
+}) {
+  if (low === null || high === null) {
+    return (
+      <Td numeric>
+        <span className="text-[rgb(var(--muted))]">—</span>
+      </Td>
+    );
+  }
+  const span = high - low;
+  const pos = span > 0 && price !== null ? Math.min(100, Math.max(0, ((price - low) / span) * 100)) : null;
+  return (
+    <Td numeric>
+      <div className="flex min-w-[96px] flex-col items-end gap-1">
+        <span className="font-mono text-[11px] leading-none text-[rgb(var(--muted))]">
+          {formatPrice(low, cur)}
+          <span className="mx-0.5">–</span>
+          {formatPrice(high, cur)}
+        </span>
+        {pos !== null && (
+          <span
+            className="relative h-1 w-full overflow-hidden rounded-full bg-[rgb(var(--border-strong))]"
+            title={`52주 위치 ${pos.toFixed(0)}%`}
+          >
+            <span
+              className="absolute inset-y-0 left-0 rounded-full bg-[rgb(var(--accent))]"
+              style={{ width: `${pos}%` }}
+            />
+          </span>
+        )}
+      </div>
+    </Td>
   );
 }

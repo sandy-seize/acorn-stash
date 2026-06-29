@@ -25,6 +25,8 @@ export interface VrTickerRow {
   raw_currency: string | null;
   captured_at: string | null;
   pe_ttm: number | null;
+  fifty_two_week_high: number | null;
+  fifty_two_week_low: number | null;
 }
 
 export async function fetchVrLatestSnapshots(): Promise<VrTickerRow[]> {
@@ -38,7 +40,9 @@ export async function fetchVrLatestSnapshots(): Promise<VrTickerRow[]> {
       p.market_cap_native::float8 AS market_cap_native,
       p.raw_currency,
       p.captured_at,
-      m.pe_ttm::float8 AS pe_ttm
+      m.pe_ttm::float8 AS pe_ttm,
+      m.fifty_two_week_high::float8 AS fifty_two_week_high,
+      m.fifty_two_week_low::float8 AS fifty_two_week_low
     FROM vr_tickers t
     LEFT JOIN LATERAL (
       SELECT * FROM vr_price_snapshots WHERE ticker_id = t.id

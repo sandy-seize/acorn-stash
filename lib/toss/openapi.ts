@@ -79,15 +79,25 @@ async function issueToken(): Promise<string> {
   return j.access_token;
 }
 
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 async function apiGet<T>(path: string, query: Record<string, string>): Promise<T> {
-  const token = await getAccessToken();
   const qs = new URLSearchParams(query).toString();
-  const res = await fetch(`${BASE}${path}?${qs}`, {
-    headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
-  });
-  const j = await res.json();
-  if (!res.ok) throw new Error(`${path} 실패 (HTTP ${res.status})`);
-  return j as T;
+  // 429(레이트리밋)는 Retry-After/지수백오프로 최대 3회 재시도
+  for (let attempt = 0; ; attempt++) {
+    const token = await getAccessToken();
+    const res = await fetch(`${BASE}${path}?${qs}`, {
+      headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+    });
+    if (res.status === 429 && attempt < 3) {
+      const ra = Number(res.headers.get("retry-after"));
+      await sleep(Number.isFinite(ra) && ra > 0 ? ra * 1000 : 400 * 2 ** attempt);
+      continue;
+    }
+    const j = await res.json();
+    if (!res.ok) throw new Error(`${path} 실패 (HTTP ${res.status})`);
+    return j as T;
+  }
 }
 
 export interface TossPrice {
@@ -105,6 +115,8 @@ export interface TossStock {
 }
 export interface TossCandle {
   timestamp: string;
+  highPrice: string;
+  lowPrice: string;
   closePrice: string;
   volume: string;
   currency: string;
@@ -122,14 +134,52 @@ export async function getStocks(symbols: string[]): Promise<TossStock[]> {
   return j.result ?? [];
 }
 
+/** 일봉 1페이지 (최신 우선, count<=200). before 지정 시 그 이전 구간. */
+async function getDailyCandlePage(
+  symbol: string,
+  count: number,
+  before?: string,
+): Promise<{ candles: TossCandle[]; nextBefore: string | null }> {
+  const q: Record<string, string> = { symbol, interval: "1d", count: String(Math.min(count, 200)) };
+  if (before) q.before = before;
+  const j = await apiGet<{ result: { candles: TossCandle[]; nextBefore: string | null } }>(
+    "/api/v1/candles",
+    q,
+  );
+  return { candles: j.result?.candles ?? [], nextBefore: j.result?.nextBefore ?? null };
+}
+
 /** 일봉 (최신 우선). count=2 면 [오늘, 전일]. */
 export async function getDailyCandles(symbol: string, count = 2): Promise<TossCandle[]> {
-  const j = await apiGet<{ result: { candles: TossCandle[] } }>("/api/v1/candles", {
-    symbol,
-    interval: "1d",
-    count: String(count),
-  });
-  return j.result?.candles ?? [];
+  return (await getDailyCandlePage(symbol, count)).candles;
+}
+
+/** 52주(≈252거래일) 최고/최저 — 캔들 페이지네이션으로 수집. */
+export async function get52WeekRange(
+  symbol: string,
+  sessions = 252,
+): Promise<{ high: number; low: number; bars: number } | null> {
+  const all: TossCandle[] = [];
+  let before: string | undefined;
+  while (all.length < sessions) {
+    const page = await getDailyCandlePage(symbol, Math.min(200, sessions - all.length), before);
+    if (page.candles.length === 0) break;
+    all.push(...page.candles);
+    if (!page.nextBefore) break;
+    before = page.nextBefore;
+  }
+  const slice = all.slice(0, sessions);
+  if (slice.length === 0) return null;
+  let high = -Infinity;
+  let low = Infinity;
+  for (const c of slice) {
+    const h = Number(c.highPrice);
+    const l = Number(c.lowPrice);
+    if (Number.isFinite(h)) high = Math.max(high, h);
+    if (Number.isFinite(l)) low = Math.min(low, l);
+  }
+  if (!Number.isFinite(high) || !Number.isFinite(low)) return null;
+  return { high, low, bars: slice.length };
 }
 
 /** KOSPI/KOSDAQ → KR, 그 외 → US. */

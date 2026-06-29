@@ -1,0 +1,26 @@
+name: cron-refresh-fundamentals
+# 52주(≈252거래일) 최고/최저를 하루 1회 갱신. 캔들 페이지네이션이 무거워
+# 시세(30분)와 분리. P/E 등은 토스 Open API 미제공이라 적재 대상 아님.
+
+on:
+  schedule:
+    - cron: "15 6 * * *" # 매일 06:15 UTC (KST 15:15)
+  workflow_dispatch: {}
+
+concurrency:
+  group: cron-refresh-fundamentals
+  cancel-in-progress: false
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: hit refresh-prices (fundamentals)
+        run: |
+          code=$(curl -s -m 58 -o /tmp/out -w "%{http_code}" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "https://acorn-stash.vercel.app/api/cron/refresh-prices?fundamentals=1")
+          echo "status=$code"
+          cat /tmp/out
+          echo
+          test "$code" = "200"
