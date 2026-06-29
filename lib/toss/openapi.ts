@@ -70,8 +70,12 @@ async function issueToken(): Promise<string> {
       client_secret: clientSecret,
     }),
   });
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`토큰 발급 실패 (HTTP ${res.status}) ${body.slice(0, 200)}`);
+  }
   const j = (await res.json()) as { access_token?: string; expires_in?: number };
-  if (!res.ok || !j.access_token) throw new Error(`토큰 발급 실패 (HTTP ${res.status})`);
+  if (!j.access_token) throw new Error("토큰 발급 실패 (access_token 없음)");
   cachedToken = {
     value: j.access_token,
     expiresAt: Date.now() + (j.expires_in ?? 600) * 1000,
