@@ -13,6 +13,29 @@ import { join } from "node:path";
 
 const BASE = process.env.TOSS_API_BASE || "https://openapi.tossinvest.com";
 
+/**
+ * 고정 IP 프록시 경유 — 토스 키가 IP 화이트리스트라, 클라우드(Vercel/GitHub)
+ * 에서 호출하려면 등록된 고정 IP 로 나가야 한다. TOSS_HTTPS_PROXY(예:
+ * http://user:pass@proxy-host:port) 설정 시 토스 호출에만 프록시 dispatcher 적용.
+ * 미설정(로컬 등 허용 IP)이면 그대로 직결. Neon DB 호출엔 영향 없음.
+ */
+let proxyDispatcher: unknown;
+let proxyResolved = false;
+async function tossDispatcher(): Promise<unknown> {
+  if (proxyResolved) return proxyDispatcher;
+  proxyResolved = true;
+  const url = process.env.TOSS_HTTPS_PROXY;
+  if (url) {
+    const { ProxyAgent } = await import("undici");
+    proxyDispatcher = new ProxyAgent(url);
+  }
+  return proxyDispatcher;
+}
+async function tossFetch(url: string, init: RequestInit): Promise<Response> {
+  const d = await tossDispatcher();
+  return fetch(url, d ? ({ ...init, dispatcher: d } as RequestInit) : init);
+}
+
 function fromShellFiles(name: string): string | undefined {
   for (const f of [".zshrc", ".zprofile", ".profile"]) {
     try {
@@ -61,7 +84,7 @@ async function issueToken(): Promise<string> {
   if (!clientId || !clientSecret) {
     throw new Error("토스 자격증명 없음: TOSS_API_KEY / TOSS_SECRET_KEY 를 설정하세요.");
   }
-  const res = await fetch(`${BASE}/oauth2/token`, {
+  const res = await tossFetch(`${BASE}/oauth2/token`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded", Accept: "application/json" },
     body: new URLSearchParams({
@@ -90,7 +113,7 @@ async function apiGet<T>(path: string, query: Record<string, string>): Promise<T
   // 429(레이트리밋)는 Retry-After/지수백오프로 최대 3회 재시도
   for (let attempt = 0; ; attempt++) {
     const token = await getAccessToken();
-    const res = await fetch(`${BASE}${path}?${qs}`, {
+    const res = await tossFetch(`${BASE}${path}?${qs}`, {
       headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
     });
     if (res.status === 429 && attempt < 3) {
